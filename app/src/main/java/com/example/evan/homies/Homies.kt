@@ -2,27 +2,23 @@ package com.example.evan.homies
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_homies.*
 
 class Homies : AppCompatActivity() {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        var selectedFragment: Fragment? = null
+        // get the selected item and replace the fragment
         when (item.itemId) {
-            R.id.navigation_home -> {
-                message.setText(R.string.title_home)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_dashboard -> {
-                message.setText(R.string.title_dashboard)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_notifications -> {
-                message.setText(R.string.title_notifications)
-                return@OnNavigationItemSelectedListener true
-            }
+            R.id.navigation_chores -> selectedFragment = ChoresFragment()
+            R.id.navigation_house -> selectedFragment = HouseFragment()
+            R.id.navigation_profile -> selectedFragment = ProfileFragment()
         }
-        false
+
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment!!).commit()
+         true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,5 +26,10 @@ class Homies : AppCompatActivity() {
         setContentView(R.layout.activity_homies)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        //TODO: get global user id? If not logged in, send to login fragment
+
+        //by default, set the fragment to chore list
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ChoresFragment()).commit()
     }
 }
