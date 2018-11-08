@@ -13,8 +13,6 @@ import kotlinx.android.synthetic.main.fragment_login.*
 
 class Homies : AppCompatActivity() {
 
-    private var userId: Int? = null
-
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         var selectedFragment: Fragment? = null
         // get the selected item and replace the fragment
@@ -31,34 +29,10 @@ class Homies : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_homies)
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ChoresFragment()).commit()
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        //TODO: get global user id? If not logged in, send to login fragment
-
-        if(userId == null) {
-            // send to login
-            setContentView(R.layout.fragment_login)
-        } else {
-            //by default, set the fragment to chore list
-            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ChoresFragment()).commit()
-        }
-
-
     }
 
-    fun logIn(v: View){
-
-        val inflator: LayoutInflater = layoutInflater
-
-        val email:String = emailEditText.text.toString()
-        val password:String = passwordEditText.text.toString()
-
-        Toast.makeText(this, "Hello $email", Toast.LENGTH_LONG).show()
-
-        //TODO: change this is real userId after fetch
-        userId = 1
-        setContentView(R.layout.activity_homies)
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ChoresFragment()).commit()
-    }
 }

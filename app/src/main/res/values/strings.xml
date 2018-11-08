@@ -13,4 +13,5 @@
     <string name="password">Password</string>
     <string name="action_log_in">Log In</string>
     <string name="app_logo_content_description">app logo</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
