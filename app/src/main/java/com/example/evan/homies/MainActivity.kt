@@ -16,12 +16,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setContentView(R.layout.activity_login)
         //TODO: get global user id? If not logged in, send to login fragment
+        //supportFragmentManager.beginTransaction()
+            //.add(R.id.login_fragment, LoginFragment()).commit()
 
         if(userId == null) {
             // send to login
-            setContentView(R.layout.fragment_login)
+            startLogin()
         } else {
             //by default, set the fragment to chore list
             startHomies()
@@ -36,19 +38,12 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun logIn(v: View){
-
-        val inflator: LayoutInflater = layoutInflater
-
-        val email:String = emailEditText.text.toString()
-        val password:String = passwordEditText.text.toString()
-
-        Toast.makeText(this, "Hello $email", Toast.LENGTH_LONG).show()
-
-        //TODO: change this is real userId after fetch
-        userId = 1
-
-        startHomies()
+    fun startLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        // To pass any data to next activity
+        //intent.putExtra("keyIdentifier", value)
+        // start your next activity
+        startActivity(intent)
     }
 
 }

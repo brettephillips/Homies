@@ -25,11 +25,15 @@
     <android.support.constraint.Guideline
             android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" app:layout_constraintGuide_begin="390dp" android:id="@+id/guideline7"/>
+            android:layout_height="wrap_content" app:layout_constraintGuide_begin="390dp" android:id="@+id/guideline5"/>
     <android.support.constraint.Guideline
             android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" app:layout_constraintGuide_begin="450dp" android:id="@+id/guideline8"/>
+            android:layout_height="wrap_content" app:layout_constraintGuide_begin="450dp" android:id="@+id/guideline6"/>
+    <android.support.constraint.Guideline
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" app:layout_constraintGuide_begin="510dp" android:id="@+id/guideline7"/>
     <ImageView
             android:layout_width="117dp"
             android:layout_height="120dp" app:srcCompat="@mipmap/ic_launcher_round"
@@ -42,34 +46,57 @@
     <EditText
             android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/firstName" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/guideline2" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline3" android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:hint="@string/first_name"/>
+    <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/lastName"
+            android:hint="@string/last_name"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/guideline4"
+            android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/guideline3"/>
+    <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
             android:id="@+id/emailEditText"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginStart="8dp"
-            app:layout_constraintStart_toStartOf="parent" android:hint="@string/email"
-            android:textColor="@android:color/background_dark" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="@+id/guideline2" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline3" android:textColorLink="@color/colorSecondary"/>
+            android:hint="@string/email"
+            android:textColor="@android:color/background_dark"
+            android:textColorLink="@color/colorSecondary"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline5" android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/guideline4" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"/>
     <EditText
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/passwordEditText"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:hint="@string/password"
-            android:textColor="@android:color/background_dark" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="@+id/guideline3" android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline4"/>
+            android:textColor="@android:color/background_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline6" android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@+id/guideline5"
+            android:layout_marginTop="8dp"/>
     <Button
-            android:text="@string/action_log_in"
+            android:text="@string/register"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:id="@+id/loginButton" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="@+id/guideline4"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toTopOf="@+id/guideline7"
             android:background="@color/colorSecondary"
             android:onClick="logIn"/>
@@ -83,14 +110,4 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline2"
             android:textSize="32sp" android:textStyle="bold" android:textColor="@color/colorPrimary"
             android:textAlignment="center"/>
-    <TextView
-            android:text="@string/create_account"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView2" android:textAlignment="center"
-            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/guideline7"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
-            android:layout_marginBottom="32dp" app:layout_constraintBottom_toTopOf="@+id/guideline8"
-            android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="goToCreateAccount"/>
 </android.support.constraint.ConstraintLayout>

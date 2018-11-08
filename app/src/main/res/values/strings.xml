@@ -14,4 +14,9 @@
     <string name="action_log_in">Log In</string>
     <string name="app_logo_content_description">app logo</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="register">Register</string>
+    <string name="create_account">Create Account</string>
+    <string name="log_in_title">Log In</string>
 </resources>
