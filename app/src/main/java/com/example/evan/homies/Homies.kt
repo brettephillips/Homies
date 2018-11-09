@@ -1,5 +1,6 @@
 package com.example.evan.homies
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -10,6 +11,8 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_homies.*
 import kotlinx.android.synthetic.main.fragment_login.*
+
+var userId: Int? = null
 
 class Homies : AppCompatActivity() {
 
@@ -28,11 +31,19 @@ class Homies : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_homies)
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ChoresFragment()).commit()
 
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        //TODO: get global user id? If not logged in, send to login fragment
 
+        if(userId == null) {
+            // send to login
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        } else {
+            //by default, set the fragment to chore list
+            setContentView(R.layout.activity_homies)
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, ChoresFragment()).commit()
+            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        }
     }
 
 }

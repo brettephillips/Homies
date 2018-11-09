@@ -18,7 +18,10 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportFragmentManager.beginTransaction().replace(R.id.login_fragment, LoginFragment()).commit()
+        setContentView(R.layout.activity_login)
+        supportFragmentManager.beginTransaction()
+            .add(R.id.login_fragment, LoginFragment())
+            .commit()
     }
 
     fun logIn(v: View){
@@ -31,20 +34,16 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this, "Hello $email", Toast.LENGTH_LONG).show()
 
         //TODO: change this is real userId after fetch
-        //userId = 1
-
-        startHomies()
+        userId = 1
+        val intent = Intent(this, Homies::class.java)
+        startActivity(intent)
     }
 
     fun goToCreateAccount(v: View) {
-        supportFragmentManager.beginTransaction().replace(R.id.login_fragment, RegisterFragment()).commit()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.login_fragment, RegisterFragment())
+            .addToBackStack(null)
+            .commit()
     }
 
-    fun startHomies() {
-        val intent = Intent(this, Homies::class.java)
-        // To pass any data to next activity
-        //intent.putExtra("keyIdentifier", value)
-        // start your next activity
-        startActivity(intent)
-    }
 }
