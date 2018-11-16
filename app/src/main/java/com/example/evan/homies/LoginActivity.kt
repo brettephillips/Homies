@@ -22,6 +22,9 @@ class LoginActivity : AppCompatActivity() {
     fun goToHomePage() {
         val intent = Intent(this, Homies::class.java)
         startActivity(intent)
+        //Android method to destroy the current activity.. I believe its another form of
+        //dealing with the backstack
+        finish()
     }
 
     fun addFragment(fragment: Fragment) {
