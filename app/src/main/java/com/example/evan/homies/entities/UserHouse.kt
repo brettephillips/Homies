@@ -6,11 +6,13 @@ import android.arch.persistence.room.*
         foreignKeys = arrayOf(ForeignKey(
             entity = User::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("userID")
+            childColumns = arrayOf("userID"),
+            onDelete = ForeignKey.CASCADE
         ), ForeignKey(
             entity = House::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("houseID")
+            childColumns = arrayOf("houseID"),
+            onDelete = ForeignKey.CASCADE
         ))
 )
 data class UserHouse (
