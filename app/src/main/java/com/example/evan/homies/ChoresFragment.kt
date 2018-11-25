@@ -29,6 +29,7 @@ class ChoresFragment : Fragment() {
 
     companion object {
         const val USER_ID = "user_id"
+        const val USER_NAME = "user_name"
     }
 
 }
