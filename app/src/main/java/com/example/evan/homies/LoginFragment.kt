@@ -35,8 +35,6 @@ class LoginFragment : Fragment() {
                 preferences!!
                     .edit()
                     .putLong("USER_ID", userInfo!!.id!!)
-                    .putString("USER_NAME", "${userInfo!!.firstName!!} " +
-                            "${userInfo.lastName!!}")
                     .apply()
                 (activity as LoginActivity).goToHomePage()
             })

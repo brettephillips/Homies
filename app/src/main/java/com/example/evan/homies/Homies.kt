@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -21,7 +22,6 @@ import kotlinx.android.synthetic.main.fragment_login.*
 class Homies : AppCompatActivity() {
 
     private var userId: Long? = null
-    private var userName: String? = null
     private var sharedPreferences: SharedPreferences? = null
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -35,7 +35,6 @@ class Homies : AppCompatActivity() {
 
         var args = Bundle()
         args.putLong("user_id", userId!!)
-        args.putString("user_name", userName!!)
 
         selectedFragment!!.arguments = args
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment).commit()
@@ -47,9 +46,8 @@ class Homies : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("preferences",Context.MODE_PRIVATE)
         userId = sharedPreferences?.getLong("USER_ID",0)
-        userName = sharedPreferences?.getString("USER_NAME", "Unknown")
 
-        if(userId!! == 0.toLong() || userName!! == "Unknown") {
+        if(userId!! == 0.toLong()) {
             // send to login
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -60,7 +58,6 @@ class Homies : AppCompatActivity() {
             val fragment = ChoresFragment()
             val args = Bundle()
             args.putLong("user_id", userId!!)
-            args.putString("user_name", userName!!)
 
             fragment.arguments = args
             supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit()
@@ -76,7 +73,7 @@ class Homies : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item!!.itemId == R.id.logout) {
-            sharedPreferences?.edit()?.remove("USER_ID")?.remove("USER_NAME")?.apply()
+            sharedPreferences?.edit()?.remove("USER_ID")?.apply()
             startActivity(Intent(this, LoginActivity::class.java))
             //Android method to destroy the current activity.. I believe its another form of
             //dealing with the backstack
@@ -85,5 +82,4 @@ class Homies : AppCompatActivity() {
 
         return true
     }
-
 }
