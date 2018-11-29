@@ -2,6 +2,7 @@ package com.example.evan.homies.entities
 
 import android.arch.persistence.room.*
 
+@Dao
 @Entity(tableName = "chore",
         foreignKeys = arrayOf(ForeignKey(
             entity = User::class,
@@ -21,6 +22,8 @@ data class Chore (
     var name: String,
     @ColumnInfo(name = "completed")
     var completed: Boolean = false,
+    @ColumnInfo(name = "thumbsUp")
+    var thumbsUp: Boolean = false,
     @ColumnInfo(name = "userID")
     var userID: Long,
     @ColumnInfo(name = "houseID")
