@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="8dp">
+    <ImageView
+            android:src="@mipmap/ic_launcher_round"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:scaleType="center"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/app_name" />
+    <EditText
+            android:id="@+id/house_id_editText"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:hint="@string/house_id_prompt"/>
+    <Button
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/join_house_action"/>
+
+</LinearLayout>

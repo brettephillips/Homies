@@ -20,4 +20,12 @@
     <string name="create_account">Create Account</string>
     <string name="log_in_title">Log In</string>
     <string name="logout_menu_item">Logout</string>
+    <string name="add_house_action">Add House</string>
+    <string name="house_name_prompt">House Name</string>
+    <string name="invite_prompt">Invite Members by Email (comma separated)</string>
+    <string name="cancel_action">Cancel</string>
+    <string name="save_action">Save</string>
+    <string name="join_house_action">Join House</string>
+    <string name="no_house_available">No house is available. Please add or join a house.</string>
+    <string name="house_id_prompt">House ID</string>
 </resources>

@@ -3,6 +3,7 @@ package com.example.evan.homies.dao
 import android.arch.persistence.room.*
 import com.example.evan.homies.entities.House
 
+@Dao
 interface HouseDao {
 
     @Query("select * from house")
@@ -12,7 +13,7 @@ interface HouseDao {
     fun getHouseById(id: Long): House
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertHouse(house: House)
+    fun insertHouse(house: House): Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateHouse(house: House)

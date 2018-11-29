@@ -47,10 +47,12 @@ class Homies : AppCompatActivity() {
         userId = sharedPreferences?.getLong("USER_ID",0)
 
         if(userId!! == 0.toLong()) {
+            // if no userId, they aren't logged in
             // send to login
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         } else {
+            //they are logged in already
             //by default, set the fragment to chore list
             setContentView(R.layout.activity_homies)
 
