@@ -28,4 +28,9 @@
     <string name="join_house_action">Join House</string>
     <string name="no_house_available">No house is available. Please add or join a house.</string>
     <string name="house_id_prompt">House ID</string>
+    <string name="user_name">%1$s %2$s</string>
+    <string name="total_thumbs_up">Total Thumbs Up</string>
+    <string name="completed_tasks">Completed Tasks</string>
+    <string name="thumbs_up_value">0</string>
+    <string name="completed_tasks_value">0</string>
 </resources>

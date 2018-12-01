@@ -2,6 +2,7 @@ package com.example.evan.homies.dao
 
 import android.arch.persistence.room.*
 
+@Dao
 interface UserHouseDao {
 
     @Query("select * from user join user_house on user.id = user_house.userID join house on user_house.houseID = house.id where user.id = :id")

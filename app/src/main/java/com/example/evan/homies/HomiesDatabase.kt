@@ -2,18 +2,21 @@ package com.example.evan.homies
 
 import android.arch.persistence.room.*
 import android.content.Context
+import com.example.evan.homies.dao.ChoreDao
 import com.example.evan.homies.dao.HouseDao
 import com.example.evan.homies.dao.UserDao
+import com.example.evan.homies.entities.Chore
 import com.example.evan.homies.entities.House
 import com.example.evan.homies.entities.User
 
 @Database(
-    entities = arrayOf(User::class, House::class),
-    version = 1,
+    entities = arrayOf(User::class, Chore::class, House::class),
+    version = 4,
     exportSchema = false
 )
 abstract class HomiesDatabase: RoomDatabase(){
     abstract fun userDao():UserDao
+    abstract fun choreDao(): ChoreDao
     abstract fun houseDao():HouseDao
 
     companion object {
