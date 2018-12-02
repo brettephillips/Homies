@@ -12,7 +12,7 @@ import android.arch.persistence.room.*
         ), ForeignKey(
             entity = House::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("houseID"),
+            childColumns = arrayOf("roomID"),
             onDelete = ForeignKey.CASCADE
         ))
 )
@@ -26,8 +26,8 @@ data class Chore (
     var thumbsUp: Boolean = false,
     @ColumnInfo(name = "userID")
     var userID: Long,
-    @ColumnInfo(name = "houseID")
-    var houseID: Long
+    @ColumnInfo(name = "roomID")
+    var roomID: Long
 ) {
     //additional columns
     @ColumnInfo(name = "id")

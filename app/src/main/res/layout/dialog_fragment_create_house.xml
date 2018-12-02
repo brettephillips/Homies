@@ -1,48 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="vertical"
-                  android:padding="8dp">
-        <ImageView
-                android:src="@mipmap/ic_launcher_round"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:scaleType="center"
-                android:layout_gravity="center_horizontal"
-                android:contentDescription="@string/app_name" />
-        <EditText
-                android:id="@+id/house_name_editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:hint="@string/house_name_prompt"/>
-    <EditText
-            android:id="@+id/house_members_editText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="16dp"
-            android:hint="@string/invite_prompt"/>
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-        <Button
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:layout_height="wrap_content"
-                android:text="@string/cancel_action"/>
-        <Button
-                android:id="@+id/save_house_btn"
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:layout_height="wrap_content"
-                android:text="@string/save_action"/>
-    </LinearLayout>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-</LinearLayout>
+    <ImageView
+            android:src="@mipmap/ic_launcher_round"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:scaleType="center"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/app_name" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:id="@+id/imageView"/>
+
+    <EditText
+        android:id="@+id/houseNameField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:hint="@string/house_name_prompt"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"/>
+
+
+</android.support.constraint.ConstraintLayout>

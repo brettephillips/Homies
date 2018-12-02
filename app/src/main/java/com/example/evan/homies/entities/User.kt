@@ -2,7 +2,7 @@ package com.example.evan.homies.entities
 
 import android.arch.persistence.room.*
 
-@Entity(tableName = "user")
+@Entity(tableName = "user", indices = arrayOf(Index(value = ["email"], unique = true)))
 data class User (
     // parameters for constructor
     @ColumnInfo(name = "email")

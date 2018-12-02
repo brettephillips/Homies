@@ -3,6 +3,7 @@ package com.example.evan.homies.dao
 import android.arch.persistence.room.*
 import com.example.evan.homies.entities.House
 
+
 @Dao
 interface HouseDao {
 

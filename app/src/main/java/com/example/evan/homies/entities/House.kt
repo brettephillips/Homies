@@ -13,3 +13,8 @@ data class House (
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 }
+
+data class HouseInfo(
+    var id: Long?,
+    var name: String?
+)

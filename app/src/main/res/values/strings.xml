@@ -33,4 +33,9 @@
     <string name="completed_tasks">Completed Tasks</string>
     <string name="thumbs_up_value">0</string>
     <string name="completed_tasks_value">0</string>
+    <string name="no_rooms_added_prompt">There are currently no rooms added. Please click the \'+\' button to add a
+        room.
+    </string>
+    <string name="rooms_descriptor">Rooms:</string>
+    <string name="room_name_prompt">Room Name</string>
 </resources>
