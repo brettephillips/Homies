@@ -19,6 +19,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 
 
@@ -26,6 +27,7 @@ class ProfileFragment : Fragment(), OnChartValueSelectedListener {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var chart: PieChart
     private val entries = arrayListOf<PieEntry>()
+    private var name = ""
     private var numOfChores: Int = 0
     private var completedTasks: Int = 0
     private var totalThumbsUp: Int = 0
@@ -60,16 +62,26 @@ class ProfileFragment : Fragment(), OnChartValueSelectedListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if(name.length > 0) {
+            userName.text = name
+        }
+
         setupChart()
         setChartStyles()
     }
 
     fun displayUsersName(user: User) {
-        view!!.userName.text = getString(R.string.user_name, user.firstName, user.lastName)
+        name = getString(R.string.user_name, user.firstName, user.lastName)
+        view!!.userName.text = name
     }
 
     fun setupChart() {
         chart = view!!.findViewById(R.id.pieChart) as PieChart
+
+        if(entries.size > 0) {
+            entries.clear()
+        }
+
         entries.add(PieEntry(100f, "No Chores found"))
 
         val set = PieDataSet(entries, "")
