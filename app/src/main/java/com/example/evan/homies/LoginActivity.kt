@@ -40,4 +40,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        //prevent the app from exiting on back button and/or going to blank screen
+        if(supportFragmentManager.backStackEntryCount > 1) {
+            super.onBackPressed()
+        }
+    }
+
 }
