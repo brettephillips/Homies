@@ -37,7 +37,9 @@ class Homies : AppCompatActivity() {
         args.putLong("user_id", userId!!)
 
         selectedFragment!!.arguments = args
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment)
+            .addToBackStack(selectedFragment.javaClass.simpleName).commit()
+
          true
     }
 
@@ -62,7 +64,15 @@ class Homies : AppCompatActivity() {
             args.putLong("user_id", userId!!)
 
             fragment.arguments = args
-            supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment).commit()
+
+            if(supportFragmentManager.backStackEntryCount > 1) {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
+                    supportFragmentManager.fragments.last()).commit()
+            } else {
+                supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment)
+                    .addToBackStack(fragment.javaClass.simpleName).commit()
+            }
+
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         }
     }
@@ -71,6 +81,13 @@ class Homies : AppCompatActivity() {
         menuInflater.inflate(R.menu.logout, menu)
 
         return true
+    }
+
+    override fun onBackPressed() {
+        //prevent the app from exiting on back button and/or going to blank screen
+        if(supportFragmentManager.backStackEntryCount > 1) {
+            super.onBackPressed()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
