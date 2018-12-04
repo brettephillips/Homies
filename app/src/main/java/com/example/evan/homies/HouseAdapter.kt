@@ -5,16 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.evan.homies.entities.Chore
 import com.example.evan.homies.entities.HouseRoom
+import com.example.evan.homies.entities.RoomAllChores
 import kotlinx.android.synthetic.main.cardview_room_card.view.*
 
-class HouseAdapter(private var mData: List<HouseRoom>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HouseAdapter(private var mData: List<RoomAllChores>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    //IMPORTANT: this is a RoomAllChores Object which exists for each room and has a list of chores
+    // ex.) roomData[0].chores is a list of chores for the first room in the list
 
     private val VIEW_TYPE_EMPTY = 0
     private val VIEW_TYPE_ROOMS = 1
 
-    fun addAll(rooms: List<HouseRoom>) {
-        mData = rooms
+    fun addAll(roomData: List<RoomAllChores>) {
+        mData = roomData
         notifyDataSetChanged()
     }
 
@@ -48,10 +53,18 @@ class HouseAdapter(private var mData: List<HouseRoom>): RecyclerView.Adapter<Rec
             //Don't need to do anything
         } else {
             val vh = viewHolder as HouseAdapter.ViewHolder
-            val room = mData[i]
+            val res = viewHolder.itemView.context.resources
+
+            val roomData = mData[i]
+            val room: HouseRoom = roomData.room!!
+            val chores: List<Chore> = roomData.chores!!
+
+            val completed = chores.count { chore -> chore.completed }
+            val open = chores.size - completed
+
             vh.roomName.text = room.name
-            vh.openChores.text = "Open Chores: 2" //TODO: CHANGE THIS BY JOINING TO GET ACTUAL NUMBER
-            vh.completedChores.text = "Completed Chores: 10" //TODO: CHANGE THIS BY JOINING TO GET ACTUAL NUMBER
+            vh.openChores.text = String.format(res.getString(R.string.open_chores_descriptor), open.toString())
+            vh.completedChores.text = String.format(res.getString(R.string.completed_chores_descriptor), completed.toString())
         }
     }
 

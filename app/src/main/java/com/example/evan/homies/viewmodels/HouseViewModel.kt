@@ -5,10 +5,7 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import com.example.evan.homies.HomiesDatabase
-import com.example.evan.homies.entities.House
-import com.example.evan.homies.entities.HouseInfo
-import com.example.evan.homies.entities.HouseRoom
-import com.example.evan.homies.entities.UserHouse
+import com.example.evan.homies.entities.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.lang.Exception
@@ -16,7 +13,7 @@ import java.lang.Exception
 class HouseViewModel(application: Application): AndroidViewModel(application) {
 
     var mHouse: MutableLiveData<HouseInfo> = MutableLiveData()
-    var mRooms: MutableLiveData<MutableList<HouseRoom>> = MutableLiveData()
+    var mRooms: MutableLiveData<MutableList<RoomAllChores>> = MutableLiveData()
 
     private val database: HomiesDatabase = HomiesDatabase.getInstance(this.getApplication())
 
@@ -24,7 +21,7 @@ class HouseViewModel(application: Application): AndroidViewModel(application) {
         return mHouse
     }
 
-    fun getCurrentRooms(): MutableLiveData<MutableList<HouseRoom>> {
+    fun getCurrentRooms(): MutableLiveData<MutableList<RoomAllChores>> {
         return mRooms
     }
 
@@ -73,5 +70,9 @@ class HouseViewModel(application: Application): AndroidViewModel(application) {
         database.roomDao().insertRoom(room)
         //update rooms
         getAllRooms(room.houseID)
+    }
+
+    fun getChoresForRoom(): List<RoomAllChores> {
+        return database.roomDao().getRooms().toMutableList()
     }
 }
