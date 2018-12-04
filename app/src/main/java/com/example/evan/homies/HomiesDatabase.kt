@@ -11,13 +11,14 @@ import com.example.evan.homies.entities.User
 
 @Database(
     entities = arrayOf(User::class, Chore::class, House::class),
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class HomiesDatabase: RoomDatabase(){
     abstract fun userDao():UserDao
     abstract fun choreDao(): ChoreDao
     abstract fun houseDao():HouseDao
+    //abstract fun userHouseDao(): UserHouseDao
 
     companion object {
         private var INSTANCE: HomiesDatabase? = null

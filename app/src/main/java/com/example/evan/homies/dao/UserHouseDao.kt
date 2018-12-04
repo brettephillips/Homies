@@ -1,6 +1,7 @@
 package com.example.evan.homies.dao
 
 import android.arch.persistence.room.*
+import com.example.evan.homies.entities.UserHouse
 
 @Dao
 interface UserHouseDao {
@@ -9,5 +10,5 @@ interface UserHouseDao {
     fun getAllHousesByUser(id: Long)
 
     @Query("select * from house join user_house on house.id = user_house.houseID join user on user_house.userID = user.id where house.id = :id")
-    fun getAllUsersByHouse(id: Long)
+    fun getAllUsersByHouse(id: Long): List<UserHouse>
 }
