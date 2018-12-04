@@ -16,8 +16,10 @@ import android.widget.Toast
 import com.example.evan.homies.entities.House
 import com.example.evan.homies.entities.HouseInfo
 import com.example.evan.homies.entities.HouseRoom
+import com.example.evan.homies.entities.RoomAllChores
 import com.example.evan.homies.viewmodels.HouseViewModel
 import kotlinx.android.synthetic.main.fragment_house.*
+import java.util.*
 
 class HouseFragment : Fragment(),
     CreateHouseDialogFragment.OnCreateDialogFinishedListener,
@@ -26,7 +28,7 @@ class HouseFragment : Fragment(),
 
     private var userId: Long? = null
     private var house: HouseInfo? = null
-    private var rooms: List<HouseRoom>? = null
+    private var roomsData: List<RoomAllChores>? = null
 
     private var houseViewModel: HouseViewModel? = null
 
@@ -43,7 +45,7 @@ class HouseFragment : Fragment(),
         }
         // init viewModel and adapter
         houseViewModel = HouseViewModel(activity!!.application)
-        mAdapter = HouseAdapter(mutableListOf<HouseRoom>())
+        mAdapter = HouseAdapter(mutableListOf<RoomAllChores>())
 
         houseViewModel!!.getCurrentHouse().observe(this, Observer { data ->
             Log.d("CURRENT HOUSE:", data.toString())
@@ -58,9 +60,9 @@ class HouseFragment : Fragment(),
         })
 
         houseViewModel!!.getCurrentRooms().observe(this, Observer { data ->
-            rooms = data
-            Log.d("CURRENT ROOMS:", rooms.toString())
-            mAdapter!!.addAll(rooms ?: emptyList())
+            roomsData = data
+            Log.d("CURRENT ROOM DATA", roomsData.toString())
+            mAdapter!!.addAll(roomsData ?: emptyList())
         })
 
         //get current house

@@ -42,4 +42,6 @@
     <string name="chore_name">Chore Name</string>
     <string name="chore_finish_date">Chore Finish Date</string>
     <string name="no_chores">No chores in the house. Please add a chore.</string>
+    <string name="completed_chores_descriptor">Completed Chores: %1$s</string>
+    <string name="open_chores_descriptor">Open Chores: %1$s</string>
 </resources>

@@ -9,7 +9,7 @@ import org.jetbrains.anko.doAsync
 
 @Database(
     entities = arrayOf(User::class, Chore::class, House::class, UserHouse::class, HouseRoom::class),
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 abstract class HomiesDatabase: RoomDatabase(){
@@ -44,7 +44,8 @@ abstract class HomiesDatabase: RoomDatabase(){
                                 getInstance(context).houseDao().insertHouse(House("Test House"))
                                 getInstance(context).userHouseDao().insertUserHouse(UserHouse(1, 1))
                                 getInstance(context).userHouseDao().insertUserHouse(UserHouse(2, 1))
-                                getInstance(context).roomDao().insertRoom(HouseRoom("kitchen", 1))
+                                getInstance(context).roomDao().insertRoom(HouseRoom("Kitchen", 1))
+                                getInstance(context).choreDao().insertChore(Chore("Clean dishes", "12-5-18", false, false, 1, 1))
                             }
                         }
                     })

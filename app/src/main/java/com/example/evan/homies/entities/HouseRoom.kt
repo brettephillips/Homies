@@ -22,3 +22,14 @@ data class HouseRoom (
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 }
+
+class RoomAllChores {
+    @Embedded
+    var room: HouseRoom? = null
+
+    @Relation(parentColumn = "id",
+    entityColumn = "roomID")
+    var chores: List<Chore> = ArrayList()
+
+}
+
