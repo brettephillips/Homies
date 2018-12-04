@@ -38,4 +38,8 @@
     </string>
     <string name="rooms_descriptor">Rooms:</string>
     <string name="room_name_prompt">Room Name</string>
+    <string name="add_chore">Add Chore</string>
+    <string name="chore_name">Chore Name</string>
+    <string name="chore_finish_date">Chore Finish Date</string>
+    <string name="no_chores">No chores in the house. Please add a chore.</string>
 </resources>

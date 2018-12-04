@@ -20,6 +20,8 @@ data class Chore (
     //parameters for constructor
     @ColumnInfo(name = "name")
     var name: String,
+    @ColumnInfo(name = "dateDue")
+    var dateDue: String,
     @ColumnInfo(name = "completed")
     var completed: Boolean = false,
     @ColumnInfo(name = "thumbsUp")

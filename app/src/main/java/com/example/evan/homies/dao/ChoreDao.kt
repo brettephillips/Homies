@@ -17,11 +17,11 @@ interface ChoreDao {
     @Query("select * from user join chore on user.id = chore.userID where user.id = :id")
     fun getChoresByUser(id: Long): List<Chore>
 
-//    @Query("select * from house join chore on house.id = chore.houseID where house.id = :id")
-//    fun getChoresByHouse(id: Long): List<Chore>
+    @Query("select * from house join chore on house.id = chore.houseID join user on chore.userID = user.id where house.id = :id")
+    fun getChoresByHouse(id: Long): List<Chore>
 
     @Insert(onConflict = REPLACE)
-    fun insertChore(chore: Chore)
+    fun insertChore(chore: Chore): Long
 
     @Update(onConflict = REPLACE)
     fun updateChore(chore: Chore)
