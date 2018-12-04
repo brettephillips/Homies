@@ -2,6 +2,7 @@ package com.example.evan.homies
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -91,6 +92,12 @@ class HouseFragment : Fragment(),
             val joinHouseDialog = JoinHouseDialogFragment.newInstance()
             joinHouseDialog.listener = this
             joinHouseDialog.show(fragmentManager!!, "joinHouse")
+        }
+
+        view.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
+            val createRoomDialogFragment = CreateRoomDialogFragment.newInstance()
+            createRoomDialogFragment.listener = this
+            createRoomDialogFragment.show(fragmentManager!!, "addRoom")
         }
 
         return view
