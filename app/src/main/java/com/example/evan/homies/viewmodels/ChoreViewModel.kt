@@ -15,9 +15,9 @@ class ChoreViewModel(application: Application):
     private var chores: MutableLiveData<MutableList<Chore>> = MutableLiveData()
     var mChore: MutableLiveData<Chore> = MutableLiveData()
 
-    fun getChores(): MutableLiveData<MutableList<Chore>> {
+    fun getChores(id: Long): MutableLiveData<MutableList<Chore>> {
         doAsync {
-            choresList = database.choreDao().getChoresByHouse(1).toMutableList()
+            choresList = database.choreDao().getChoresByRoom(id).toMutableList()
             chores.postValue(choresList)
 
             uiThread {

@@ -35,7 +35,8 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         } else {
             choreViewModel = ChoreViewModel(activity?.application!!)
 
-            choreViewModel.getChores()
+            //static room for now
+            choreViewModel.getChores(1)
                 .observe(this, Observer { chores ->
                     adapter = ChoreAdapter()
 

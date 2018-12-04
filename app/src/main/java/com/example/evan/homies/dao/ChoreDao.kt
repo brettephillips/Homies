@@ -17,8 +17,8 @@ interface ChoreDao {
     @Query("select * from user join chore on user.id = chore.userID where user.id = :id")
     fun getChoresByUser(id: Long): List<Chore>
 
-    @Query("select * from house join chore on house.id = chore.houseID join user on chore.userID = user.id where house.id = :id")
-    fun getChoresByHouse(id: Long): List<Chore>
+    @Query("select * from room join chore on room.id = chore.roomID join user on chore.userID = user.id where room.id = :id")
+    fun getChoresByRoom(id: Long): List<Chore>
 
     @Insert(onConflict = REPLACE)
     fun insertChore(chore: Chore): Long
