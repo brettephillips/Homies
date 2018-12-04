@@ -8,6 +8,7 @@
         android:padding="16dp">
 
     <TextView
+            android:id="@+id/houseTitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/no_house_available"
@@ -16,12 +17,45 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-    <LinearLayout
+
+    <TextView
+            android:id="@+id/roomsTitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/houseTitleText"
+            app:layout_constraintBottom_toTopOf="@+id/scroll_view_container"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" style="?attr/buttonBarStyle">
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/rooms_descriptor"
+            android:textSize="20sp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintVertical_bias="0.75"/>
+    <ScrollView
+            android:id="@+id/scroll_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/houseTitleText"
+            app:layout_constraintBottom_toTopOf="@+id/noHouseButtons"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+        </android.support.v7.widget.RecyclerView>
+    </ScrollView>
+    <LinearLayout
+            android:id="@+id/noHouseButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="?attr/buttonBarStyle">
 
         <Button android:id="@+id/add_house_btn"
                 android:layout_width="0dp"
@@ -37,5 +71,19 @@
                 android:gravity="center"
                 android:text="@string/join_house_action" style="?attr/buttonBarButtonStyle"/>
     </LinearLayout>
+
+    <!-- Width and height of 0 at first to hide by default-->
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:tint="@android:color/white"
+            app:layout_anchorGravity="bottom|end"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

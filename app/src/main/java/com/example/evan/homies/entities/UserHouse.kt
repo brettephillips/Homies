@@ -22,5 +22,6 @@ data class UserHouse (
     @ColumnInfo(name = "houseID")
     var houseID: Long
 ) {
-
+    @PrimaryKey(autoGenerate = true)
+    var id: Long = 0
 }
