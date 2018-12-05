@@ -13,6 +13,7 @@ import android.arch.lifecycle.Observer
 import android.support.design.widget.FloatingActionButton
 import android.widget.TextView
 import android.widget.Toast
+import com.example.evan.homies.R.string.chores
 import com.example.evan.homies.entities.Chore
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
@@ -34,22 +35,38 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             //TODO: no user found, redirect to login
         } else {
             choreViewModel = ChoreViewModel(activity?.application!!)
+            adapter = ChoreAdapter()
+
+            choreViewModel.getCurrentHouse()
+                    .observe(this, Observer { house ->
+                        if(house?.name != null || house?.name != "") {
+                            doAsync {
+                                choreViewModel!!.getAllRooms(house!!.id!!)
+                            }
+                        }
+                    })
+
+            choreViewModel.getCurrentRooms()
+                    .observe(this, Observer { rooms ->
+                        for(room in rooms!!) {
+                            for(chore in room.chores) {
+                                choreNames.add(chore.name)
+                                choreDates.add(chore.dateDue)
+                                choreAssignees.add(chore.userID.toString())
+                            }
+                        }
+
+                        adapter!!.taskNames = choreNames
+                        adapter!!.taskDates = choreDates
+                        adapter!!.taskAssignees = choreAssignees
+
+                        adapter!!.notifyDataSetChanged()
+                    })
 
             //static room for now
-            choreViewModel.getChores(1)
-                .observe(this, Observer { chores ->
-                    adapter = ChoreAdapter()
-
-                    for(chore in chores!!) {
-                        choreNames.add(chore.name)
-                        choreDates.add(chore.dateDue)
-                        choreAssignees.add(chore.userID.toString())
-                    }
-
-                    adapter!!.taskNames = choreNames
-                    adapter!!.taskDates = choreDates
-                    adapter!!.taskAssignees = choreAssignees
-                })
+            doAsync {
+                choreViewModel.getUsersHouse(userId!!)
+            }
 
             if(choreNames.size > 0) {
                 println("CHORES, SO WE NEED TO REMOVE MESSAGE")

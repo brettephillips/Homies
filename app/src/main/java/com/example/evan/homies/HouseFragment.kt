@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.example.evan.homies.R.id.fab
 import com.example.evan.homies.entities.House
 import com.example.evan.homies.entities.HouseInfo
 import com.example.evan.homies.entities.HouseRoom
