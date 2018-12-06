@@ -17,4 +17,7 @@ interface HouseRoomDao {
 
     @Insert(onConflict = REPLACE)
     fun insertRoom(room: HouseRoom)
+
+    @Delete
+    fun deleteRoom(room: HouseRoom)
 }

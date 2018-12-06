@@ -1,11 +1,17 @@
 package com.example.evan.homies
 
 import android.arch.lifecycle.Observer
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.view.*
 import org.jetbrains.anko.*
@@ -31,11 +37,17 @@ class HouseFragment : Fragment(),
     private var house: HouseInfo? = null
     private var roomsData: List<RoomAllChores>? = null
 
-    private var houseViewModel: HouseViewModel? = null
+    //viewModel
+    var houseViewModel: HouseViewModel? = null
 
+    //adapter
     var mAdapter: HouseAdapter? = null
     private var recyclerView : RecyclerView? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
+
+    //swipe to delete
+    private var icon: Drawable? = null
+    private var background: ColorDrawable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +58,7 @@ class HouseFragment : Fragment(),
         }
         // init viewModel and adapter
         houseViewModel = HouseViewModel(activity!!.application)
-        mAdapter = HouseAdapter(mutableListOf<RoomAllChores>())
+        mAdapter = HouseAdapter(this, mutableListOf<RoomAllChores>())
 
         houseViewModel!!.getCurrentHouse().observe(this, Observer { data ->
             Log.d("CURRENT HOUSE:", data.toString())
@@ -62,7 +74,7 @@ class HouseFragment : Fragment(),
 
         houseViewModel!!.getCurrentRooms().observe(this, Observer { data ->
             roomsData = data
-            Log.d("CURRENT ROOM DATA", roomsData.toString())
+            Log.d("CURRENT ROOM DATA", roomsData?.map { data -> data.room }.toString())
             mAdapter!!.addAll(roomsData ?: emptyList())
         })
 
@@ -102,6 +114,8 @@ class HouseFragment : Fragment(),
             createRoomDialogFragment.listener = this
             createRoomDialogFragment.show(fragmentManager!!, "addRoom")
         }
+
+        setRecyclerViewItemTouchListener()
 
         return view
     }
@@ -146,5 +160,65 @@ class HouseFragment : Fragment(),
         //show fab
         fab.show()
     }
+
+    //swipe functionality
+    private fun setRecyclerViewItemTouchListener() {
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+            init {
+                icon = ContextCompat.getDrawable(activity!!,
+                    R.drawable.ic_delete)
+                background = ColorDrawable (Color.RED)
+            }
+
+            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                return false //don't want to do anything here
+
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+                val position = viewHolder.adapterPosition
+                mAdapter!!.removeItem(position, houseViewModel!!)
+            }
+
+            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                val itemView = viewHolder.itemView
+                val backgroundCornerOffset = 20
+                val iconMargin = (itemView.height - icon!!.getIntrinsicHeight()) / 2
+                val iconTop = itemView.top + (itemView.height - icon!!.getIntrinsicHeight()) / 2
+                val iconBottom = iconTop + icon!!.getIntrinsicHeight()
+
+                if (dX > 0) { // Swiping to the right
+                    val iconLeft = itemView.left + iconMargin + icon!!.getIntrinsicWidth()
+                    val iconRight = itemView.left + iconMargin
+                    icon!!.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                    background!!.setBounds(itemView.left, itemView.top,
+                        itemView.left + dX.toInt() + backgroundCornerOffset,
+                        itemView.bottom)
+                } else if (dX < 0) { // Swiping to the left
+                    val iconLeft = itemView.right - iconMargin - icon!!.getIntrinsicWidth()
+                    val iconRight = itemView.right - iconMargin
+                    icon!!.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+                    background!!.setBounds(itemView.right + dX.toInt() - backgroundCornerOffset,
+                        itemView.top, itemView.right, itemView.bottom)
+                } else { // view is unSwiped
+                    background!!.setBounds(0, 0, 0, 0)
+                }
+
+                background!!.draw(c)
+                icon!!.draw(c)
+
+            }
+        }
+
+        //initialize and attach
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+
+    } //setRecyclerViewItemTouchListener
 
 }
