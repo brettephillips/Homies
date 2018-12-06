@@ -5,10 +5,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        app:cardBackgroundColor="#000000"
+        app:cardCornerRadius="12dp"
         app:cardElevation="3dp"
-        app:contentPadding="1dp"
-        android:foreground="?selectableItemBackground"
+        app:contentPadding="4dp"
         android:clickable="true">
 
     <android.support.constraint.ConstraintLayout

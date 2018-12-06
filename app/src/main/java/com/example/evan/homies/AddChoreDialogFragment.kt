@@ -14,14 +14,18 @@ import org.jetbrains.anko.uiThread
 class AddChoreDialogFragment: DialogFragment() {
     private lateinit var choreViewModel: ChoreViewModel
     var listener: OnChoreAddDialogFinishedListener? = null
-    var assignee = ""
+    var users: MutableMap<Long, String> = mutableMapOf()
+    var rooms: MutableMap<Long, String> = mutableMapOf()
+    var assignee: Long? = null
+    var room: Long? = null
 
     companion object {
 
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(usersList: MutableMap<Long, String>, roomsList: MutableMap<Long, String>) =
                 AddChoreDialogFragment().apply {
-                    //context?
+                    users = usersList
+                    rooms = roomsList
                 }
     }
 
@@ -39,9 +43,8 @@ class AddChoreDialogFragment: DialogFragment() {
                 val name = view.findViewById<EditText>(R.id.chore_name_editText).text.toString()
                 val date = view.findViewById<EditText>(R.id.chore_date_editText).text.toString()
 
-                println("NEW CHORE: $name, $date, $assignee")
-                //hard coding userid and houseid for now 1, 1
-                val newChore = Chore(name.toString(), date.toString(), false, false, 1, 1)
+                println("NEW CHORE: $name, $date, $assignee, $room")
+                val newChore = Chore(name, date, false, false, assignee!!, room!!)
 
                 uiThread {
                     listener?.onChoreAddDialogFinished(newChore)
@@ -57,16 +60,15 @@ class AddChoreDialogFragment: DialogFragment() {
     }
 
     fun getUsersInHouse(view: View) {
-        var dropdown = view.findViewById<Spinner>(R.id.choreAssigneeDropdown)
-        //hard coding list of users in house for now
-        //In order to get this I need to get my house ID, then get all the users in that house
-        //May need a map to link the id to the user unless I want another query to get the users ID
-        var usersList = mutableListOf("Brett Phillips", "Evan Forbes", "Nick Deyette", "Tyler Valentine")
-        var userMappings = mapOf<Long, String>(1.toLong() to "Brett Phillips", 2.toLong() to "Evan Forbes",
-                3.toLong() to "Nick Deyette", 4.toLong() to "Tyler Valentine")
+        var userDropdown = view.findViewById<Spinner>(R.id.choreAssigneeDropdown)
+        var roomDropdown = view.findViewById<Spinner>(R.id.roomAssigneeDropdown)
+        var userMutList = users.values.toMutableList()
+        var roomMutList = rooms.values.toMutableList()
 
-        dropdown.adapter = ArrayAdapter(this.context, android.R.layout.simple_spinner_dropdown_item,
-                userMappings.values.toMutableList())
+        userDropdown.adapter = ArrayAdapter(this.context, android.R.layout.simple_spinner_dropdown_item,
+                userMutList)
+        roomDropdown.adapter = ArrayAdapter(this.context, android.R.layout.simple_spinner_dropdown_item,
+                roomMutList)
 
         view.findViewById<Spinner>(R.id.choreAssigneeDropdown).onItemSelectedListener =
                 object: AdapterView.OnItemSelectedListener {
@@ -75,7 +77,34 @@ class AddChoreDialogFragment: DialogFragment() {
                     }
 
                     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                        assignee = usersList[p2]
+                        if(p3 == 0.toLong()) {
+                            assignee = users.keys.first()
+                        } else {
+                            users.forEach { (key, value) ->
+                                if(users[key].equals(userMutList[p2])) {
+                                    assignee = key
+                                }
+                            }
+                        }
+                    }
+                }
+
+        view.findViewById<Spinner>(R.id.roomAssigneeDropdown).onItemSelectedListener =
+                object: AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                        if(p3 == 0.toLong()) {
+                            room = rooms.keys.first()
+                        } else {
+                            rooms.forEach { (key, value) ->
+                                if(rooms[key].equals(roomMutList[p2])) {
+                                    room = key
+                                }
+                            }
+                        }
                     }
                 }
     }

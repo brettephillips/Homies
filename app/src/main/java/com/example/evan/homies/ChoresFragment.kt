@@ -21,12 +21,13 @@ import org.jetbrains.anko.uiThread
 
 class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener {
     private lateinit var choreViewModel: ChoreViewModel
+    private var totalChores: Int = 0
     private var userId: Long? = null
+    private var houseId: Long? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: ChoreAdapter? = null
-    private var choreNames: MutableList<String> = mutableListOf()
-    private var choreDates: MutableList<String> = mutableListOf()
-    private var choreAssignees: MutableList<String> = mutableListOf()
+    private var userMappings: MutableMap<Long, String> = mutableMapOf()
+    private var roomMappings: MutableMap<Long, String> = mutableMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,20 +41,45 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             choreViewModel.getCurrentHouse()
                     .observe(this, Observer { house ->
                         if(house?.name != null || house?.name != "") {
+                            houseId = house!!.id!!
+
                             doAsync {
-                                choreViewModel!!.getAllRooms(house!!.id!!)
+                                var userList = choreViewModel!!.getAllUsers(houseId!!)
+                                for(user in userList) {
+                                    userMappings.put(user.id, "${user.firstName} ${user.lastName}")
+                                }
+
+                                choreViewModel!!.getAllRooms(houseId!!)
                             }
                         }
                     })
 
             choreViewModel.getCurrentRooms()
                     .observe(this, Observer { rooms ->
+                        val choreNames: MutableList<String> = mutableListOf()
+                        val choreDates: MutableList<String> = mutableListOf()
+                        val choreAssignees: MutableList<String> = mutableListOf()
+                        totalChores = 0
+
                         for(room in rooms!!) {
+                            roomMappings.put(room.room!!.id, room.room!!.name)
+
                             for(chore in room.chores) {
                                 choreNames.add(chore.name)
                                 choreDates.add(chore.dateDue)
-                                choreAssignees.add(chore.userID.toString())
+                                var firstInitial = userMappings[chore.userID]!!.substring(0, 1)
+                                var space = userMappings[chore.userID]!!.indexOf(" ") + 1
+                                var lastInitial = userMappings[chore.userID]!!.substring(space, space + 1)
+                                choreAssignees.add(firstInitial+lastInitial)
+
+                                totalChores++
                             }
+                        }
+
+                        if(totalChores > 0) {
+                            view!!.findViewById<TextView>(R.id.no_chores_message).visibility = View.GONE
+                        } else {
+                            view!!.findViewById<TextView>(R.id.no_chores_message).visibility = View.VISIBLE
                         }
 
                         adapter!!.taskNames = choreNames
@@ -67,12 +93,6 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             doAsync {
                 choreViewModel.getUsersHouse(userId!!)
             }
-
-            if(choreNames.size > 0) {
-                println("CHORES, SO WE NEED TO REMOVE MESSAGE")
-            } else {
-                println("NO CHORES KEEP MESSAGE ON SCREEN")
-            }
         }
     }
 
@@ -85,7 +105,9 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         recyclerView.adapter = adapter
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_chore).setOnClickListener {
-            val dialog = AddChoreDialogFragment.newInstance()
+            println(roomMappings)
+            val dialog = AddChoreDialogFragment.newInstance(userMappings, roomMappings)
+            dialog.listener = this
             dialog.show(fragmentManager!!, "AddChoreDialog")
         }
 
@@ -94,9 +116,10 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
 
     override fun onChoreAddDialogFinished(chore: Chore) {
         doAsync {
-            //choreViewModel.addChore(chore) //creates the chore
+            choreViewModel.addChore(chore, houseId!!) //creates the chore
+
             uiThread {
-                //Toast.makeText(context,"${house.name} has been created", Toast.LENGTH_LONG).show()
+                Toast.makeText(context,"${chore.name} has been created", Toast.LENGTH_LONG).show()
             }
         }
     }

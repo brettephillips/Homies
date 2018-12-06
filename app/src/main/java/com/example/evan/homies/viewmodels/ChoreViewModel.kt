@@ -8,6 +8,7 @@ import com.example.evan.homies.HomiesDatabase
 import com.example.evan.homies.entities.Chore
 import com.example.evan.homies.entities.HouseInfo
 import com.example.evan.homies.entities.RoomAllChores
+import com.example.evan.homies.entities.User
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -41,11 +42,12 @@ class ChoreViewModel(application: Application):
         return chores
     }
 
-    fun addChore(chore: Chore) {
+    fun addChore(chore: Chore, houseId: Long) {
         doAsync {
             var choreID = database.choreDao().insertChore(chore)
             var newChore = database.choreDao().getChoreById(choreID)
-            mChore.postValue(newChore)
+
+            getAllRooms(houseId)
         }
     }
 
@@ -57,5 +59,9 @@ class ChoreViewModel(application: Application):
 
     fun getAllRooms(houseId: Long) {
         mRooms.postValue(database.roomDao().getRoomsByHouse(houseId).toMutableList())
+    }
+
+    fun getAllUsers(houseId: Long): List<User> {
+        return database.userHouseDao().getAllUsersByHouse(houseId).toMutableList()
     }
 }
