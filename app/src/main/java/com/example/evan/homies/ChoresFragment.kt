@@ -11,10 +11,12 @@ import android.widget.Button
 import com.example.evan.homies.viewmodels.ChoreViewModel
 import android.arch.lifecycle.Observer
 import android.support.design.widget.FloatingActionButton
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.widget.TextView
 import android.widget.Toast
 import com.example.evan.homies.R.string.chores
 import com.example.evan.homies.entities.Chore
+import kotlinx.android.synthetic.main.recyclerview_chore_view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
@@ -28,6 +30,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
     private var adapter: ChoreAdapter? = null
     private var userMappings: MutableMap<Long, String> = mutableMapOf()
     private var roomMappings: MutableMap<Long, String> = mutableMapOf()
+    private var choresList: MutableList<Chore>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +62,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                         val choreNames: MutableList<String> = mutableListOf()
                         val choreDates: MutableList<String> = mutableListOf()
                         val choreAssignees: MutableList<String> = mutableListOf()
+                        choresList = mutableListOf()
                         totalChores = 0
 
                         for(room in rooms!!) {
@@ -72,6 +76,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                                 var lastInitial = userMappings[chore.userID]!!.substring(space, space + 1)
                                 choreAssignees.add(firstInitial+lastInitial)
 
+                                choresList!!.add(chore)
                                 totalChores++
                             }
                         }
@@ -103,6 +108,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         layoutManager = LinearLayoutManager(this.context)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
+        setRecyclerViewItemTouchListener(recyclerView)
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_chore).setOnClickListener {
             println(roomMappings)
@@ -122,6 +128,33 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                 Toast.makeText(context,"${chore.name} has been created", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun setRecyclerViewItemTouchListener(rv: RecyclerView) {
+        val itemTouchCallback =  object : ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, p1: Int) {
+                val position = viewHolder!!.adapterPosition
+
+                doAsync {
+                    choreViewModel.deleteChore(choresList!![position])
+                }
+
+                adapter!!.taskNames.removeAt(position)
+                adapter!!.taskDates.removeAt(position)
+                adapter!!.taskAssignees.removeAt(position)
+
+                adapter!!.notifyItemRemoved(position)
+            }
+        }
+
+        //initialize and attach
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(rv)
     }
 
     companion object {

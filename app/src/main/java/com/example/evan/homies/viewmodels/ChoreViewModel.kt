@@ -51,6 +51,10 @@ class ChoreViewModel(application: Application):
         }
     }
 
+    fun deleteChore(chore: Chore) {
+        database.choreDao().deleteChore(chore)
+    }
+
     fun getUsersHouse(userId: Long) {
         val userHouse =  database.userHouseDao().getAllHousesByUser(userId)
         Log.d("ViewModel House result:", userHouse.toString())
