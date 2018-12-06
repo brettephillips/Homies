@@ -72,6 +72,11 @@ class HouseViewModel(application: Application): AndroidViewModel(application) {
         getAllRooms(room.houseID)
     }
 
+    fun deleteRoom(room: HouseRoom) {
+        database.roomDao().deleteRoom(room)
+        getAllRooms(room.houseID)
+    }
+
     fun getChoresForRoom(): List<RoomAllChores> {
         return database.roomDao().getRooms().toMutableList()
     }

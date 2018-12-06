@@ -1,5 +1,8 @@
 package com.example.evan.homies
 
+import android.support.constraint.ConstraintLayout
+import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,15 +11,20 @@ import android.widget.TextView
 import com.example.evan.homies.entities.Chore
 import com.example.evan.homies.entities.HouseRoom
 import com.example.evan.homies.entities.RoomAllChores
+import com.example.evan.homies.viewmodels.HouseViewModel
 import kotlinx.android.synthetic.main.cardview_room_card.view.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
-class HouseAdapter(private var mData: List<RoomAllChores>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HouseAdapter(private var fragment: HouseFragment, private var mData: List<RoomAllChores>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     //IMPORTANT: this is a RoomAllChores Object which exists for each room and has a list of chores
     // ex.) roomData[0].chores is a list of chores for the first room in the list
 
     private val VIEW_TYPE_EMPTY = 0
     private val VIEW_TYPE_ROOMS = 1
+    private var mRecentlyDeletedPosition: Int? = null
+    private var mRecentlyDeletedRoom: HouseRoom? = null
 
     fun addAll(roomData: List<RoomAllChores>) {
         mData = roomData
@@ -45,6 +53,40 @@ class HouseAdapter(private var mData: List<RoomAllChores>): RecyclerView.Adapter
         }
 
         return vh
+    }
+
+    fun removeItem(item: Int, houseViewModel: HouseViewModel) {
+        doAsync {
+
+            mRecentlyDeletedPosition = item
+            mRecentlyDeletedRoom = mData[item].room!!
+
+            houseViewModel.deleteRoom(mData[item].room!!)
+
+            uiThread {
+                //notifyItemRemoved(item) //don't need because of postValue
+                showUndoSnackbar()
+            }
+        }
+    }
+
+    private fun showUndoSnackbar() {
+        val view = fragment.activity!!.findViewById<ConstraintLayout>(R.id.houseConstraintLayout)
+        //should be a string resource
+        val snackbar = Snackbar.make(view, "Do you want to undo the delete?",
+            Snackbar.LENGTH_LONG)
+        //should be a string resource
+        snackbar.setAction("Undo") {
+            undoDelete()
+        }
+        snackbar.show()
+    }
+
+    private fun undoDelete() {
+        doAsync {
+            fragment.houseViewModel!!.insertRoom(mRecentlyDeletedRoom!!)
+
+        }
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, i: Int) {
