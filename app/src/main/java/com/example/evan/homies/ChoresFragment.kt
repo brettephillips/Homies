@@ -10,18 +10,21 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.example.evan.homies.viewmodels.ChoreViewModel
 import android.arch.lifecycle.Observer
+import android.graphics.Color
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.evan.homies.R.string.chores
 import com.example.evan.homies.entities.Chore
+import kotlinx.android.synthetic.main.cardview_chore_card.*
 import kotlinx.android.synthetic.main.recyclerview_chore_view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
 
-class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener {
+class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener{
     private lateinit var choreViewModel: ChoreViewModel
     private var totalChores: Int = 0
     private var userId: Long? = null
@@ -111,7 +114,6 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         setRecyclerViewItemTouchListener(recyclerView)
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_chore).setOnClickListener {
-            println(roomMappings)
             val dialog = AddChoreDialogFragment.newInstance(userMappings, roomMappings)
             dialog.listener = this
             dialog.show(fragmentManager!!, "AddChoreDialog")
