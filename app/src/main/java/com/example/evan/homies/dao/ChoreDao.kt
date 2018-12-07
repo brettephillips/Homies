@@ -26,4 +26,7 @@ interface ChoreDao {
     @Update(onConflict = REPLACE)
     fun updateChore(chore: Chore)
 
+    @Delete
+    fun deleteChore(chore: Chore)
+
 }

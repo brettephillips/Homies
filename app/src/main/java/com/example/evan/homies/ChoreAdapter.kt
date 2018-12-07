@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 
 class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
@@ -26,6 +27,19 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
                 var position = adapterPosition
                 Snackbar.make(it, "Click detected on item $position",
                     Snackbar.LENGTH_LONG).setAction("Action", null).show()
+            }
+
+            itemView.findViewById<ImageView>(R.id.thumbsImage).setOnClickListener {
+                val thumb = itemView.findViewById<ImageView>(R.id.thumbsImage)
+                val tag = thumb.tag
+
+                if(tag == "thumbOutline") {
+                    thumb.setImageResource(R.drawable.ic_thumb_up_fill_24dp)
+                    thumb.tag = "thumbFill"
+                } else {
+                    thumb.setImageResource(R.drawable.ic_thumb_up_outline_24dp)
+                    thumb.tag = "thumbOutline"
+                }
             }
         }
     }

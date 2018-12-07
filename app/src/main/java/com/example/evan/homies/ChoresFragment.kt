@@ -10,23 +10,30 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.example.evan.homies.viewmodels.ChoreViewModel
 import android.arch.lifecycle.Observer
+import android.graphics.Color
 import android.support.design.widget.FloatingActionButton
+import android.support.v7.widget.helper.ItemTouchHelper
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.evan.homies.R.string.chores
 import com.example.evan.homies.entities.Chore
+import kotlinx.android.synthetic.main.cardview_chore_card.*
+import kotlinx.android.synthetic.main.recyclerview_chore_view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
 
-class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener {
+class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener{
     private lateinit var choreViewModel: ChoreViewModel
+    private var totalChores: Int = 0
     private var userId: Long? = null
+    private var houseId: Long? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var adapter: ChoreAdapter? = null
-    private var choreNames: MutableList<String> = mutableListOf()
-    private var choreDates: MutableList<String> = mutableListOf()
-    private var choreAssignees: MutableList<String> = mutableListOf()
+    private var userMappings: MutableMap<Long, String> = mutableMapOf()
+    private var roomMappings: MutableMap<Long, String> = mutableMapOf()
+    private var choresList: MutableList<Chore>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,20 +47,47 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             choreViewModel.getCurrentHouse()
                     .observe(this, Observer { house ->
                         if(house?.name != null || house?.name != "") {
+                            houseId = house!!.id!!
+
                             doAsync {
-                                choreViewModel!!.getAllRooms(house!!.id!!)
+                                var userList = choreViewModel!!.getAllUsers(houseId!!)
+                                for(user in userList) {
+                                    userMappings.put(user.id, "${user.firstName} ${user.lastName}")
+                                }
+
+                                choreViewModel!!.getAllRooms(houseId!!)
                             }
                         }
                     })
 
             choreViewModel.getCurrentRooms()
                     .observe(this, Observer { rooms ->
+                        val choreNames: MutableList<String> = mutableListOf()
+                        val choreDates: MutableList<String> = mutableListOf()
+                        val choreAssignees: MutableList<String> = mutableListOf()
+                        choresList = mutableListOf()
+                        totalChores = 0
+
                         for(room in rooms!!) {
+                            roomMappings.put(room.room!!.id, room.room!!.name)
+
                             for(chore in room.chores) {
                                 choreNames.add(chore.name)
                                 choreDates.add(chore.dateDue)
-                                choreAssignees.add(chore.userID.toString())
+                                var firstInitial = userMappings[chore.userID]!!.substring(0, 1)
+                                var space = userMappings[chore.userID]!!.indexOf(" ") + 1
+                                var lastInitial = userMappings[chore.userID]!!.substring(space, space + 1)
+                                choreAssignees.add(firstInitial+lastInitial)
+
+                                choresList!!.add(chore)
+                                totalChores++
                             }
+                        }
+
+                        if(totalChores > 0) {
+                            view!!.findViewById<TextView>(R.id.no_chores_message).visibility = View.GONE
+                        } else {
+                            view!!.findViewById<TextView>(R.id.no_chores_message).visibility = View.VISIBLE
                         }
 
                         adapter!!.taskNames = choreNames
@@ -67,12 +101,6 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             doAsync {
                 choreViewModel.getUsersHouse(userId!!)
             }
-
-            if(choreNames.size > 0) {
-                println("CHORES, SO WE NEED TO REMOVE MESSAGE")
-            } else {
-                println("NO CHORES KEEP MESSAGE ON SCREEN")
-            }
         }
     }
 
@@ -83,9 +111,11 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         layoutManager = LinearLayoutManager(this.context)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
+        setRecyclerViewItemTouchListener(recyclerView)
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_chore).setOnClickListener {
-            val dialog = AddChoreDialogFragment.newInstance()
+            val dialog = AddChoreDialogFragment.newInstance(userMappings, roomMappings)
+            dialog.listener = this
             dialog.show(fragmentManager!!, "AddChoreDialog")
         }
 
@@ -94,11 +124,39 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
 
     override fun onChoreAddDialogFinished(chore: Chore) {
         doAsync {
-            //choreViewModel.addChore(chore) //creates the chore
+            choreViewModel.addChore(chore, houseId!!) //creates the chore
+
             uiThread {
-                //Toast.makeText(context,"${house.name} has been created", Toast.LENGTH_LONG).show()
+                Toast.makeText(context,"${chore.name} has been created", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun setRecyclerViewItemTouchListener(rv: RecyclerView) {
+        val itemTouchCallback =  object : ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(p0: RecyclerView, p1: RecyclerView.ViewHolder, p2: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, p1: Int) {
+                val position = viewHolder!!.adapterPosition
+
+                doAsync {
+                    choreViewModel.deleteChore(choresList!![position])
+                }
+
+                adapter!!.taskNames.removeAt(position)
+                adapter!!.taskDates.removeAt(position)
+                adapter!!.taskAssignees.removeAt(position)
+
+                adapter!!.notifyItemRemoved(position)
+            }
+        }
+
+        //initialize and attach
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(rv)
     }
 
     companion object {

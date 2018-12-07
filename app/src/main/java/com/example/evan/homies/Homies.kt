@@ -69,7 +69,7 @@ class Homies : AppCompatActivity() {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container,
                     supportFragmentManager.fragments.last()).commit()
             } else {
-                supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment)
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                     .addToBackStack(fragment.javaClass.simpleName).commit()
             }
 

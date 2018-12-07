@@ -10,7 +10,7 @@ import android.arch.persistence.room.*
             childColumns = arrayOf("userID"),
             onDelete = ForeignKey.CASCADE
         ), ForeignKey(
-            entity = House::class,
+            entity = HouseRoom::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("roomID"),
             onDelete = ForeignKey.CASCADE

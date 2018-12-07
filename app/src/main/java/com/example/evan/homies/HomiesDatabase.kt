@@ -9,7 +9,7 @@ import org.jetbrains.anko.doAsync
 
 @Database(
     entities = arrayOf(User::class, Chore::class, House::class, UserHouse::class, HouseRoom::class),
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 abstract class HomiesDatabase: RoomDatabase(){
