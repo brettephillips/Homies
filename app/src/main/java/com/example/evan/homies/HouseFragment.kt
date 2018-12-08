@@ -150,7 +150,8 @@ class HouseFragment : Fragment(),
     }
 
     private fun updateTitle() {
-        view?.findViewById<TextView>(R.id.houseTitleText)?.text = ""
+        view?.findViewById<TextView>(R.id.houseTitleText)?.visibility = View.GONE
+        view?.findViewById<TextView>(R.id.roomsTitleText)?.visibility = View.VISIBLE
         (activity as Homies).supportActionBar?.title = house!!.name
     }
 
