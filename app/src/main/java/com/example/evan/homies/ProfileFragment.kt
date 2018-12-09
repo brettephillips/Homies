@@ -128,8 +128,8 @@ class ProfileFragment : Fragment(), OnChartValueSelectedListener {
         if(numOfChores != 0) {
             entries.clear()
             chart.setTouchEnabled(true)
-            entries.add(PieEntry((completedTasks / numOfChores) * 100f, "Completed Tasks"))
-            entries.add(PieEntry(((numOfChores - completedTasks) / numOfChores) * 100f, "Incomplete Tasks"))
+            entries.add(PieEntry((completedTasks.toFloat() / numOfChores.toFloat()) * 100f, "Completed Tasks"))
+            entries.add(PieEntry(((numOfChores.toFloat() - completedTasks.toFloat()) / numOfChores.toFloat()) * 100f, "Incomplete Tasks"))
 
             chart.notifyDataSetChanged()
             chart.invalidate()

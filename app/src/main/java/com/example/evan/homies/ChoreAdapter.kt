@@ -1,6 +1,5 @@
 package com.example.evan.homies
 
-import android.content.Context
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.evan.homies.entities.Chore
 
 class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
     public var taskNames = mutableListOf<String>()
@@ -34,9 +32,9 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
 
             itemView.findViewById<TextView>(R.id.task_assignee).setOnClickListener {
                 val assigneeTV = itemView.findViewById<TextView>(R.id.task_assignee)
-                assigneeTV.text = "\u2713"
+                //assigneeTV.text = "\u2713"
 
-                listener?.onChoreCheckCompleted(adapterPosition)
+                listener?.onChoreCheckCompleted(adapterPosition, assigneeTV)
             }
 
             itemView.findViewById<ImageView>(R.id.thumbsImage).setOnClickListener {
@@ -73,6 +71,6 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
     }
 
     interface OnChoreCheckCompleted {
-        fun onChoreCheckCompleted(choreID: Int)
+        fun onChoreCheckCompleted(choreID: Int, textView: TextView)
     }
 }

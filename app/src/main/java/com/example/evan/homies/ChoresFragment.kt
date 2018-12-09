@@ -146,17 +146,24 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         }
     }
 
-    override fun onChoreCheckCompleted(choreID: Int) {
-        //Get the chore now update it to make the chore completed
-        println(choresList!![choreID].toString() + ": DID IT WORK?")
-        choresList!![choreID].completed = true
-        println(choresList!![choreID].toString() + ": AFTER UPDATE?")
-        doAsync {
-            choreViewModel.updateChore(choresList!![choreID])
+    override fun onChoreCheckCompleted(choreID: Int, textView: TextView) {
+        var firstInitial = userMappings[userId]!!.substring(0, 1)
+        var space = userMappings[userId]!!.indexOf(" ") + 1
+        var lastInitial = userMappings[userId]!!.substring(space, space + 1)
 
-            uiThread {
-                Toast.makeText(context,"${choresList!![choreID].name} has been updated", Toast.LENGTH_LONG).show()
+        if((firstInitial+lastInitial) == textView.text) {
+            choresList!![choreID].completed = true
+
+            doAsync {
+                choreViewModel.updateChore(choresList!![choreID])
+
+                uiThread {
+                    Toast.makeText(context,"${choresList!![choreID].name} has been updated", Toast.LENGTH_LONG).show()
+                    textView.text = "\u2713"
+                }
             }
+        } else {
+            Toast.makeText(context, "You cannot mark this chore completed.", Toast.LENGTH_LONG).show()
         }
     }
 
