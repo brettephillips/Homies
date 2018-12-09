@@ -12,6 +12,7 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
     public var taskNames = mutableListOf<String>()
     public var taskDates = mutableListOf<String>()
     public var taskAssignees = mutableListOf<String>()
+    public var listener: ChoreAdapter.OnChoreCheckCompleted? = null
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var task: TextView
@@ -27,6 +28,13 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
                 var position = adapterPosition
                 Snackbar.make(it, "Click detected on item $position",
                     Snackbar.LENGTH_LONG).setAction("Action", null).show()
+            }
+
+            itemView.findViewById<TextView>(R.id.task_assignee).setOnClickListener {
+                val assigneeTV = itemView.findViewById<TextView>(R.id.task_assignee)
+                //assigneeTV.text = "\u2713"
+
+                listener?.onChoreCheckCompleted(adapterPosition, assigneeTV)
             }
 
             itemView.findViewById<ImageView>(R.id.thumbsImage).setOnClickListener {
@@ -60,5 +68,9 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int {
         return taskNames.size
+    }
+
+    interface OnChoreCheckCompleted {
+        fun onChoreCheckCompleted(choreID: Int, textView: TextView)
     }
 }

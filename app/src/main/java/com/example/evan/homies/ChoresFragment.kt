@@ -11,6 +11,7 @@ import com.example.evan.homies.viewmodels.ChoreViewModel
 import android.arch.lifecycle.Observer
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.widget.*
 import androidx.annotation.UiThread
 import com.example.evan.homies.entities.Chore
@@ -18,7 +19,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.ArrayList
 
-class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener{
+class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener, ChoreAdapter.OnChoreCheckCompleted{
     private lateinit var choreViewModel: ChoreViewModel
     private var totalChores: Int = 0
     private var userId: Long? = null
@@ -30,7 +31,6 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
     private var choresList: MutableList<Chore>? = null
     private var filterName: String? = null
     var filterList: MutableMap<Long, String> = mutableMapOf()
-    var filterListNonMap: MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +81,11 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                                 if(filterName != userMappings[chore.userID] && filterName != "All") {
                                     continue
                                 }
+
+                                if(chore.completed == true) {
+                                    continue
+                                }
+
                                 choreNames.add(chore.name)
                                 choreDates.add(chore.dateDue)
                                 var firstInitial = userMappings[chore.userID]!!.substring(0, 1)
@@ -119,6 +124,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         layoutManager = LinearLayoutManager(this.context)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
+        adapter!!.listener = this
         setRecyclerViewItemTouchListener(recyclerView)
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_chore).setOnClickListener {
@@ -137,6 +143,27 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             uiThread {
                 Toast.makeText(context,"${chore.name} has been created", Toast.LENGTH_LONG).show()
             }
+        }
+    }
+
+    override fun onChoreCheckCompleted(choreID: Int, textView: TextView) {
+        var firstInitial = userMappings[userId]!!.substring(0, 1)
+        var space = userMappings[userId]!!.indexOf(" ") + 1
+        var lastInitial = userMappings[userId]!!.substring(space, space + 1)
+
+        if((firstInitial+lastInitial) == textView.text) {
+            choresList!![choreID].completed = true
+
+            doAsync {
+                choreViewModel.updateChore(choresList!![choreID])
+
+                uiThread {
+                    Toast.makeText(context,"${choresList!![choreID].name} has been updated", Toast.LENGTH_LONG).show()
+                    textView.text = "\u2713"
+                }
+            }
+        } else {
+            Toast.makeText(context, "You cannot mark this chore completed.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -170,7 +197,6 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
     fun setupFilter() {
         filterList.put(0.toLong(), "All")
         filterList.putAll(userMappings)
-        println(filterList)
 
         var filterDropdown = view!!.findViewById<Spinner>(R.id.filterDropdown)
         filterDropdown.adapter = ArrayAdapter(this.context, android.R.layout.simple_spinner_dropdown_item,
