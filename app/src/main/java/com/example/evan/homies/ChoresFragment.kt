@@ -7,22 +7,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import com.example.evan.homies.viewmodels.ChoreViewModel
 import android.arch.lifecycle.Observer
-import android.graphics.Color
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
-import com.example.evan.homies.R.string.chores
+import android.widget.*
+import androidx.annotation.UiThread
 import com.example.evan.homies.entities.Chore
-import kotlinx.android.synthetic.main.cardview_chore_card.*
-import kotlinx.android.synthetic.main.recyclerview_chore_view.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
+import java.util.ArrayList
 
 class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener{
     private lateinit var choreViewModel: ChoreViewModel
@@ -34,6 +28,9 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
     private var userMappings: MutableMap<Long, String> = mutableMapOf()
     private var roomMappings: MutableMap<Long, String> = mutableMapOf()
     private var choresList: MutableList<Chore>? = null
+    private var filterName: String? = null
+    var filterList: MutableMap<Long, String> = mutableMapOf()
+    var filterListNonMap: MutableList<String> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +53,15 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                                 }
 
                                 choreViewModel!!.getAllRooms(houseId!!)
+
+                                if(filterName == null) {
+                                    filterName = "All"
+
+                                    uiThread {
+                                        setupFilter()
+                                        return@uiThread
+                                    }
+                                }
                             }
                         }
                     })
@@ -72,6 +78,9 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                             roomMappings.put(room.room!!.id, room.room!!.name)
 
                             for(chore in room.chores) {
+                                if(filterName != userMappings[chore.userID] && filterName != "All") {
+                                    continue
+                                }
                                 choreNames.add(chore.name)
                                 choreDates.add(chore.dateDue)
                                 var firstInitial = userMappings[chore.userID]!!.substring(0, 1)
@@ -97,7 +106,6 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                         adapter!!.notifyDataSetChanged()
                     })
 
-            //static room for now
             doAsync {
                 choreViewModel.getUsersHouse(userId!!)
             }
@@ -157,6 +165,32 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         //initialize and attach
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchHelper.attachToRecyclerView(rv)
+    }
+
+    fun setupFilter() {
+        filterList.put(0.toLong(), "All")
+        filterList.putAll(userMappings)
+        println(filterList)
+
+        var filterDropdown = view!!.findViewById<Spinner>(R.id.filterDropdown)
+        filterDropdown.adapter = ArrayAdapter(this.context, android.R.layout.simple_spinner_dropdown_item,
+                filterList.values.toMutableList())
+
+        filterDropdown.onItemSelectedListener =
+                object: AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                        if(filterName != filterList.values.toMutableList()[p2]) {
+                            doAsync {
+                                filterName = filterList.values.toMutableList()[p2]
+                                choreViewModel.getAllRooms(houseId!!)
+                            }
+                        }
+                    }
+                }
     }
 
     companion object {
