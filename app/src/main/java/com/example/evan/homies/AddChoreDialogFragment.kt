@@ -10,6 +10,7 @@ import com.example.evan.homies.entities.Chore
 import com.example.evan.homies.viewmodels.ChoreViewModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.util.ArrayList
 
 class AddChoreDialogFragment: DialogFragment() {
     private lateinit var choreViewModel: ChoreViewModel
@@ -29,8 +30,33 @@ class AddChoreDialogFragment: DialogFragment() {
                 }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        if(!users.isEmpty() || !rooms.isEmpty()) {
+            outState.putStringArrayList("userVals", ArrayList(users.values.toList()) as ArrayList<String>)
+            outState.putIntegerArrayList("userKeys", ArrayList(users.keys.toList()) as ArrayList<Int>)
+            outState.putStringArrayList("roomVals", ArrayList(rooms.values.toList()) as ArrayList<String>)
+            outState.putIntegerArrayList("roomKeys", ArrayList(rooms.keys.toList()) as ArrayList<Int>)
+        }
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         choreViewModel = ChoreViewModel(activity?.application!!)
+        if (savedInstanceState != null) {
+            var vals = savedInstanceState.getStringArrayList("userVals")
+            var keys = savedInstanceState.getIntegerArrayList("userKeys")
+            var rVals = savedInstanceState.getStringArrayList("roomVals")
+            var rKeys = savedInstanceState.getIntegerArrayList("roomKeys")
+
+            for(i in keys.indices) {
+                users.put(keys[i].toLong(), vals[i])
+            }
+
+            for(i in rKeys.indices) {
+                rooms.put(rKeys[i].toLong(), rVals[i])
+            }
+        }
 
         val builder = AlertDialog.Builder(activity!!)
         val inflater = activity!!.layoutInflater
