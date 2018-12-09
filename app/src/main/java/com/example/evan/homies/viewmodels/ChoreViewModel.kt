@@ -51,6 +51,12 @@ class ChoreViewModel(application: Application):
         }
     }
 
+    fun updateChore(chore: Chore) {
+        doAsync {
+            database.choreDao().updateChore(chore)
+        }
+    }
+
     fun deleteChore(chore: Chore) {
         database.choreDao().deleteChore(chore)
     }
