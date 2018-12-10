@@ -12,42 +12,40 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
     public var taskNames = mutableListOf<String>()
     public var taskDates = mutableListOf<String>()
     public var taskAssignees = mutableListOf<String>()
-    public var listener: ChoreAdapter.OnChoreCheckCompleted? = null
+    public var thumbsUpList = mutableListOf<Boolean>()
+    public var completedList = mutableListOf<Boolean>()
+    public var listener: ChoreAdapter.OnChoreAction? = null
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var task: TextView
         var date: TextView
         var assignee: TextView
+        var thumbsUp: ImageView
+        var completedCheck: TextView
 
         init {
             task = itemView.findViewById(R.id.task_title)
             date = itemView.findViewById(R.id.task_date)
             assignee = itemView.findViewById(R.id.task_assignee)
+            thumbsUp = itemView.findViewById(R.id.thumbsImage)
+            completedCheck = itemView.findViewById(R.id.task_assignee)
 
             itemView.setOnClickListener {
-                var position = adapterPosition
+                val position = adapterPosition
                 Snackbar.make(it, "Click detected on item $position",
                     Snackbar.LENGTH_LONG).setAction("Action", null).show()
             }
 
             itemView.findViewById<TextView>(R.id.task_assignee).setOnClickListener {
                 val assigneeTV = itemView.findViewById<TextView>(R.id.task_assignee)
-                //assigneeTV.text = "\u2713"
 
                 listener?.onChoreCheckCompleted(adapterPosition, assigneeTV)
             }
 
             itemView.findViewById<ImageView>(R.id.thumbsImage).setOnClickListener {
                 val thumb = itemView.findViewById<ImageView>(R.id.thumbsImage)
-                val tag = thumb.tag
 
-                if(tag == "thumbOutline") {
-                    thumb.setImageResource(R.drawable.ic_thumb_up_fill_24dp)
-                    thumb.tag = "thumbFill"
-                } else {
-                    thumb.setImageResource(R.drawable.ic_thumb_up_outline_24dp)
-                    thumb.tag = "thumbOutline"
-                }
+                listener?.onChoreThumbsUp(adapterPosition, thumb)
             }
         }
     }
@@ -64,13 +62,24 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
         viewHolder.task.text = taskNames[i]
         viewHolder.date.text = taskDates[i]
         viewHolder.assignee.text = taskAssignees[i]
+
+        if(thumbsUpList[i]) {
+            viewHolder.thumbsUp.setImageResource(R.drawable.ic_thumb_up_fill_24dp)
+        } else {
+            viewHolder.thumbsUp.setImageResource(R.drawable.ic_thumb_up_outline_24dp)
+        }
+
+        if(completedList[i]) {
+            viewHolder.completedCheck.text = "\u2713"
+        }
     }
 
     override fun getItemCount(): Int {
         return taskNames.size
     }
 
-    interface OnChoreCheckCompleted {
+    interface OnChoreAction {
         fun onChoreCheckCompleted(choreID: Int, textView: TextView)
+        fun onChoreThumbsUp(choreID: Int, imageView: ImageView)
     }
 }
