@@ -14,12 +14,13 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.widget.*
 import androidx.annotation.UiThread
+import com.example.evan.homies.R.id.textView
 import com.example.evan.homies.entities.Chore
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.ArrayList
 
-class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener, ChoreAdapter.OnChoreCheckCompleted{
+class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener, ChoreAdapter.OnChoreAction{
     private lateinit var choreViewModel: ChoreViewModel
     private var totalChores: Int = 0
     private var userId: Long? = null
@@ -71,6 +72,9 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                         val choreNames: MutableList<String> = mutableListOf()
                         val choreDates: MutableList<String> = mutableListOf()
                         val choreAssignees: MutableList<String> = mutableListOf()
+                        val choreThumbs: MutableList<Boolean> = mutableListOf()
+                        val choreCompleted: MutableList<Boolean> = mutableListOf()
+
                         choresList = mutableListOf()
                         totalChores = 0
 
@@ -78,13 +82,16 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                             roomMappings.put(room.room!!.id, room.room!!.name)
 
                             for(chore in room.chores) {
+                                choreThumbs.add(chore.thumbsUp)
+                                choreCompleted.add(chore.completed)
+
                                 if(filterName != userMappings[chore.userID] && filterName != "All") {
                                     continue
                                 }
 
-                                if(chore.completed == true) {
+                                /*if(chore.completed == true) {
                                     continue
-                                }
+                                }*/
 
                                 choreNames.add(chore.name)
                                 choreDates.add(chore.dateDue)
@@ -107,6 +114,8 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                         adapter!!.taskNames = choreNames
                         adapter!!.taskDates = choreDates
                         adapter!!.taskAssignees = choreAssignees
+                        adapter!!.thumbsUpList = choreThumbs
+                        adapter!!.completedList = choreCompleted
 
                         adapter!!.notifyDataSetChanged()
                     })
@@ -164,6 +173,19 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             }
         } else {
             Toast.makeText(context, "You cannot mark this chore completed.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onChoreThumbsUp(choreID: Int, imageView: ImageView) {
+        choresList!![choreID].thumbsUp = true
+
+        doAsync {
+            choreViewModel.updateChore(choresList!![choreID])
+
+            uiThread {
+                Toast.makeText(context,"${choresList!![choreID].name} has been updated", Toast.LENGTH_LONG).show()
+                imageView.setImageResource(R.drawable.ic_thumb_up_fill_24dp)
+            }
         }
     }
 
