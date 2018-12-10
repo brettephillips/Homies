@@ -31,7 +31,7 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
             completedCheck = itemView.findViewById(R.id.task_assignee)
 
             itemView.setOnClickListener {
-                var position = adapterPosition
+                val position = adapterPosition
                 Snackbar.make(it, "Click detected on item $position",
                     Snackbar.LENGTH_LONG).setAction("Action", null).show()
             }
@@ -63,11 +63,13 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
         viewHolder.date.text = taskDates[i]
         viewHolder.assignee.text = taskAssignees[i]
 
-        if(thumbsUpList[i] == true) {
+        if(thumbsUpList[i]) {
             viewHolder.thumbsUp.setImageResource(R.drawable.ic_thumb_up_fill_24dp)
+        } else {
+            viewHolder.thumbsUp.setImageResource(R.drawable.ic_thumb_up_outline_24dp)
         }
 
-        if(completedList[i] == true) {
+        if(completedList[i]) {
             viewHolder.completedCheck.text = "\u2713"
         }
     }

@@ -48,12 +48,12 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                             houseId = house!!.id!!
 
                             doAsync {
-                                var userList = choreViewModel!!.getAllUsers(houseId!!)
+                                val userList = choreViewModel.getAllUsers(houseId!!)
                                 for(user in userList) {
-                                    userMappings.put(user.id, "${user.firstName} ${user.lastName}")
+                                    userMappings[user.id] = "${user.firstName} ${user.lastName}"
                                 }
 
-                                choreViewModel!!.getAllRooms(houseId!!)
+                                choreViewModel.getAllRooms(houseId!!)
 
                                 if(filterName == null) {
                                     filterName = "All"
@@ -79,26 +79,22 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                         totalChores = 0
 
                         for(room in rooms!!) {
-                            roomMappings.put(room.room!!.id, room.room!!.name)
+                            roomMappings[room.room!!.id] = room.room!!.name
 
                             for(chore in room.chores) {
-                                choreThumbs.add(chore.thumbsUp)
-                                choreCompleted.add(chore.completed)
-
                                 if(filterName != userMappings[chore.userID] && filterName != "All") {
                                     continue
                                 }
 
-                                /*if(chore.completed == true) {
-                                    continue
-                                }*/
 
                                 choreNames.add(chore.name)
                                 choreDates.add(chore.dateDue)
-                                var firstInitial = userMappings[chore.userID]!!.substring(0, 1)
-                                var space = userMappings[chore.userID]!!.indexOf(" ") + 1
-                                var lastInitial = userMappings[chore.userID]!!.substring(space, space + 1)
+                                val firstInitial = userMappings[chore.userID]!!.substring(0, 1)
+                                val space = userMappings[chore.userID]!!.indexOf(" ") + 1
+                                val lastInitial = userMappings[chore.userID]!!.substring(space, space + 1)
                                 choreAssignees.add(firstInitial+lastInitial)
+                                choreThumbs.add(chore.thumbsUp)
+                                choreCompleted.add(chore.completed)
 
                                 choresList!!.add(chore)
                                 totalChores++
@@ -156,9 +152,9 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
     }
 
     override fun onChoreCheckCompleted(choreID: Int, textView: TextView) {
-        var firstInitial = userMappings[userId]!!.substring(0, 1)
-        var space = userMappings[userId]!!.indexOf(" ") + 1
-        var lastInitial = userMappings[userId]!!.substring(space, space + 1)
+        val firstInitial = userMappings[userId]!!.substring(0, 1)
+        val space = userMappings[userId]!!.indexOf(" ") + 1
+        val lastInitial = userMappings[userId]!!.substring(space, space + 1)
 
         if((firstInitial+lastInitial) == textView.text) {
             choresList!![choreID].completed = true
@@ -197,7 +193,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, p1: Int) {
-                val position = viewHolder!!.adapterPosition
+                val position = viewHolder.adapterPosition
 
                 doAsync {
                     choreViewModel.deleteChore(choresList!![position])
@@ -220,7 +216,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         filterList.put(0.toLong(), "All")
         filterList.putAll(userMappings)
 
-        var filterDropdown = view!!.findViewById<Spinner>(R.id.filterDropdown)
+        val filterDropdown = view!!.findViewById<Spinner>(R.id.filterDropdown)
         filterDropdown.adapter = ArrayAdapter(this.context, android.R.layout.simple_spinner_dropdown_item,
                 filterList.values.toMutableList())
 
