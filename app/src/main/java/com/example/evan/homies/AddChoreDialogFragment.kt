@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.text.Editable
 import android.view.View
 import android.widget.*
 import com.example.evan.homies.entities.Chore
@@ -19,14 +20,19 @@ class AddChoreDialogFragment: DialogFragment() {
     var rooms: MutableMap<Long, String> = mutableMapOf()
     var assignee: Long? = null
     var room: Long? = null
+    var nameFunction: String = ""
+    var chore: Chore? = null
 
     companion object {
 
         @JvmStatic
-        fun newInstance(usersList: MutableMap<Long, String>, roomsList: MutableMap<Long, String>) =
+        fun newInstance(usersList: MutableMap<Long, String>, roomsList: MutableMap<Long, String>, name: String,
+                        chore: Chore?) =
                 AddChoreDialogFragment().apply {
                     users = usersList
                     rooms = roomsList
+                    nameFunction = name
+                    this.chore = chore
                 }
     }
 
@@ -64,23 +70,45 @@ class AddChoreDialogFragment: DialogFragment() {
 
         getUsersInHouse(view)
 
-        builder.setView(view).setPositiveButton("Add") {_, _ ->
-            doAsync {
-                val name = view.findViewById<EditText>(R.id.chore_name_editText).text.toString()
-                val date = view.findViewById<EditText>(R.id.chore_date_editText).text.toString()
+        if(nameFunction == "Edit") {
+            view.findViewById<EditText>(R.id.chore_name_editText).setText(chore!!.name)
+            view.findViewById<EditText>(R.id.chore_date_editText).setText(chore!!.dateDue)
+            view.findViewById<Spinner>(R.id.choreAssigneeDropdown).setSelection(users.keys.indexOf(chore!!.userID))
+            view.findViewById<Spinner>(R.id.roomAssigneeDropdown).setSelection(users.keys.indexOf(chore!!.roomID))
 
-                println("NEW CHORE: $name, $date, $assignee, $room")
-                val newChore = Chore(name, date, false, false, assignee!!, room!!)
+            builder.setView(view).setPositiveButton("Edit") {_, _ ->
+                doAsync {
+                    val name = view.findViewById<EditText>(R.id.chore_name_editText).text.toString()
+                    val date = view.findViewById<EditText>(R.id.chore_date_editText).text.toString()
 
-                uiThread {
-                    listener?.onChoreAddDialogFinished(newChore)
+                    chore!!.name = name
+                    chore!!.dateDue = date
+                    chore!!.userID = assignee!!
+                    chore!!.roomID = room!!
+
+                    uiThread {
+                        listener?.onChoreEditDialogFinished(chore!!)
+                    }
                 }
+            }.setNegativeButton("Cancel") {_, _ ->
+                this@AddChoreDialogFragment.dialog.cancel()
             }
-        }.setNegativeButton("Cancel") {_, _ ->
-            this@AddChoreDialogFragment.dialog.cancel()
+        } else {
+            builder.setView(view).setPositiveButton("Add") {_, _ ->
+                doAsync {
+                    val name = view.findViewById<EditText>(R.id.chore_name_editText).text.toString()
+                    val date = view.findViewById<EditText>(R.id.chore_date_editText).text.toString()
+
+                    val newChore = Chore(name, date, false, false, assignee!!, room!!)
+
+                    uiThread {
+                        listener?.onChoreAddDialogFinished(newChore)
+                    }
+                }
+            }.setNegativeButton("Cancel") {_, _ ->
+                this@AddChoreDialogFragment.dialog.cancel()
+            }
         }
-
-
 
         return builder.create()
     }
@@ -137,5 +165,6 @@ class AddChoreDialogFragment: DialogFragment() {
 
     interface OnChoreAddDialogFinishedListener {
         fun onChoreAddDialogFinished(chore: Chore)
+        fun onChoreEditDialogFinished(chore: Chore)
     }
 }

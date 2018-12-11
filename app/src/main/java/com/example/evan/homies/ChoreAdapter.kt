@@ -31,9 +31,7 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
             completedCheck = itemView.findViewById(R.id.task_assignee)
 
             itemView.setOnClickListener {
-                val position = adapterPosition
-                Snackbar.make(it, "Click detected on item $position",
-                    Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                listener!!.onEditChore(adapterPosition)
             }
 
             itemView.findViewById<TextView>(R.id.task_assignee).setOnClickListener {
@@ -81,5 +79,6 @@ class ChoreAdapter: RecyclerView.Adapter<ChoreAdapter.ViewHolder>() {
     interface OnChoreAction {
         fun onChoreCheckCompleted(choreID: Int, textView: TextView)
         fun onChoreThumbsUp(choreID: Int, imageView: ImageView)
+        fun onEditChore(choreID: Int)
     }
 }
