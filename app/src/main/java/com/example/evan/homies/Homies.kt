@@ -12,6 +12,7 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -36,12 +37,7 @@ class Homies : AppCompatActivity() {
             R.id.navigation_profile -> selectedFragment = ProfileFragment()
         }
 
-        var args = Bundle()
-        args.putLong("user_id", userId!!)
-
-        selectedFragment!!.arguments = args
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, selectedFragment)
-            .addToBackStack(selectedFragment.javaClass.simpleName).commit()
+        addFragment(selectedFragment!!)
 
          true
     }
@@ -105,8 +101,26 @@ class Homies : AppCompatActivity() {
         return true
     }
 
+    private fun addFragment(fragment: Fragment) {
+
+        val currentFragment = supportFragmentManager
+            .findFragmentByTag(fragment.javaClass.simpleName)
+        if (currentFragment != null) {
+                supportFragmentManager
+                    .popBackStackImmediate(fragment.javaClass.simpleName, 0) //pop the backstack to the fragment
+        } else { //fragment doesn't already exist
+            var args = Bundle()
+            args.putLong("user_id", userId!!)
+
+            fragment.arguments = args
+            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                .addToBackStack(fragment.javaClass.simpleName).commit()
+        }
+    }
+
     override fun onBackPressed() {
         //prevent the app from exiting on back button and/or going to blank screen
+        Log.d("LAST FRAG", supportFragmentManager.fragments.last().toString())
         if(supportFragmentManager.backStackEntryCount > 1) {
             super.onBackPressed()
         }
