@@ -1,5 +1,7 @@
 package com.example.evan.homies
 
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -9,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.evan.homies.viewmodels.ChoreViewModel
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.NotificationCompat
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.widget.*
@@ -19,6 +23,12 @@ import com.example.evan.homies.entities.Chore
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.util.ArrayList
+import android.app.AlarmManager
+import android.content.Context.NOTIFICATION_SERVICE
+import android.content.Intent
+import android.support.v4.app.NotificationManagerCompat
+import android.support.v4.content.ContextCompat.*
+
 
 class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener, ChoreAdapter.OnChoreAction{
     private lateinit var choreViewModel: ChoreViewModel
@@ -147,6 +157,16 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
 
             uiThread {
                 Toast.makeText(context,"${chore.name} has been created", Toast.LENGTH_LONG).show()
+
+                var notification = NotificationCompat.Builder(context!!, "default")
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setContentTitle("Chore Due")
+                        .setContentText("${chore.name} is due on ${chore.dateDue}. Hurry up and get it done!!!")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+
+                val mNotificationManager = NotificationManagerCompat.from(context!!)
+                mNotificationManager.notify(0, notification.build())
             }
         }
     }

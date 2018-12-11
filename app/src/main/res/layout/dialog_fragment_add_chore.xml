@@ -21,6 +21,14 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:hint="@string/chore_name" android:singleLine="true"/>
+        <!--<DatePicker android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:ems="10"
+                    android:id="@+id/chore_date_editText"/>-->
         <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

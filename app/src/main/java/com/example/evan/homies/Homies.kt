@@ -1,8 +1,11 @@
 package com.example.evan.homies
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.design.widget.BottomNavigationView
@@ -46,6 +49,8 @@ class Homies : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        createNotificationChannel()
+
         sharedPreferences = getSharedPreferences("preferences",Context.MODE_PRIVATE)
         userId = sharedPreferences?.getLong("USER_ID",0)
 
@@ -74,6 +79,23 @@ class Homies : AppCompatActivity() {
             }
 
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        }
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "channel name"
+            val descriptionText = "channel description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("default", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
