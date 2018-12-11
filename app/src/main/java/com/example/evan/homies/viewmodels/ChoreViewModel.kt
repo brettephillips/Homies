@@ -51,9 +51,11 @@ class ChoreViewModel(application: Application):
         }
     }
 
-    fun updateChore(chore: Chore) {
+    fun updateChore(chore: Chore, houseId: Long) {
         doAsync {
             database.choreDao().updateChore(chore)
+
+            getAllRooms(houseId)
         }
     }
 

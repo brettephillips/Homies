@@ -133,7 +133,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         setRecyclerViewItemTouchListener(recyclerView)
 
         view.findViewById<FloatingActionButton>(R.id.fab_add_chore).setOnClickListener {
-            val dialog = AddChoreDialogFragment.newInstance(userMappings, roomMappings)
+            val dialog = AddChoreDialogFragment.newInstance(userMappings, roomMappings, "Add", null)
             dialog.listener = this
             dialog.show(fragmentManager!!, "AddChoreDialog")
         }
@@ -151,6 +151,16 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         }
     }
 
+    override fun onChoreEditDialogFinished(chore: Chore) {
+        doAsync {
+            choreViewModel.updateChore(chore, houseId!!) //updates the chore
+
+            uiThread {
+                Toast.makeText(context,"${chore.name} has been updated", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     override fun onChoreCheckCompleted(choreID: Int, textView: TextView) {
         val firstInitial = userMappings[userId]!!.substring(0, 1)
         val space = userMappings[userId]!!.indexOf(" ") + 1
@@ -160,7 +170,7 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
             choresList!![choreID].completed = true
 
             doAsync {
-                choreViewModel.updateChore(choresList!![choreID])
+                choreViewModel.updateChore(choresList!![choreID], houseId!!)
 
                 uiThread {
                     Toast.makeText(context,"${choresList!![choreID].name} has been updated", Toast.LENGTH_LONG).show()
@@ -176,13 +186,21 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
         choresList!![choreID].thumbsUp = true
 
         doAsync {
-            choreViewModel.updateChore(choresList!![choreID])
+            choreViewModel.updateChore(choresList!![choreID], houseId!!)
 
             uiThread {
                 Toast.makeText(context,"${choresList!![choreID].name} has been updated", Toast.LENGTH_LONG).show()
                 imageView.setImageResource(R.drawable.ic_thumb_up_fill_24dp)
             }
         }
+    }
+
+    override fun onEditChore(choreID: Int) {
+        var chore = choresList!![choreID]
+
+        val dialog = AddChoreDialogFragment.newInstance(userMappings, roomMappings, "Edit", chore)
+        dialog.listener = this
+        dialog.show(fragmentManager!!, "EditChoreDialog")
     }
 
     private fun setRecyclerViewItemTouchListener(rv: RecyclerView) {
