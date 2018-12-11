@@ -167,13 +167,18 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .build()
 
-
                 val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 val notificationIntent = Intent(context, NotificationBroadcaster::class.java)
                 notificationIntent.putExtra("notification_id", 1);
                 notificationIntent.putExtra("notification", notification);
                 val alarmIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0)
-                alarmManager.set(AlarmManager.RTC, Calendar.getInstance().getTimeInMillis() + 5000, alarmIntent)
+
+                val today = Calendar.getInstance()
+                val future = Calendar.getInstance()
+                val split = chore!!.dateDue.split("-")
+                future.set(split[2].toInt(), split[0].toInt()-1, split[1].toInt())
+                val difference = (future.timeInMillis - today.timeInMillis) - 28800000
+                alarmManager.set(AlarmManager.RTC, today.timeInMillis + difference, alarmIntent)
             }
         }
     }
