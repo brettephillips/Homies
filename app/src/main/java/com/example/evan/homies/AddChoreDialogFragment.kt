@@ -2,16 +2,17 @@ package com.example.evan.homies
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v4.app.DialogFragment
-import android.text.Editable
 import android.view.View
 import android.widget.*
 import com.example.evan.homies.entities.Chore
 import com.example.evan.homies.viewmodels.ChoreViewModel
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.util.ArrayList
+import java.util.*
 
 class AddChoreDialogFragment: DialogFragment() {
     private lateinit var choreViewModel: ChoreViewModel
@@ -22,6 +23,8 @@ class AddChoreDialogFragment: DialogFragment() {
     var room: Long? = null
     var nameFunction: String = ""
     var chore: Chore? = null
+    var calendar: Calendar = Calendar.getInstance()
+    var date: String? = null
 
     companion object {
 
@@ -47,6 +50,7 @@ class AddChoreDialogFragment: DialogFragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         choreViewModel = ChoreViewModel(activity?.application!!)
         if (savedInstanceState != null) {
@@ -69,20 +73,22 @@ class AddChoreDialogFragment: DialogFragment() {
         val view = inflater.inflate(R.layout.dialog_fragment_add_chore, null)
 
         getUsersInHouse(view)
+        getDatePicker(view)
 
         if(nameFunction == "Edit") {
             view.findViewById<EditText>(R.id.chore_name_editText).setText(chore!!.name)
-            view.findViewById<EditText>(R.id.chore_date_editText).setText(chore!!.dateDue)
+
+            val split = chore!!.dateDue.split("-")
+            view.findViewById<DatePicker>(R.id.chore_date_picker).updateDate(split[2].toInt(), split[0].toInt()-1, split[1].toInt())
             view.findViewById<Spinner>(R.id.choreAssigneeDropdown).setSelection(users.keys.indexOf(chore!!.userID))
             view.findViewById<Spinner>(R.id.roomAssigneeDropdown).setSelection(users.keys.indexOf(chore!!.roomID))
 
             builder.setView(view).setPositiveButton("Edit") {_, _ ->
                 doAsync {
                     val name = view.findViewById<EditText>(R.id.chore_name_editText).text.toString()
-                    val date = view.findViewById<EditText>(R.id.chore_date_editText).text.toString()
 
                     chore!!.name = name
-                    chore!!.dateDue = date
+                    chore!!.dateDue = date!!
                     chore!!.userID = assignee!!
                     chore!!.roomID = room!!
 
@@ -97,9 +103,12 @@ class AddChoreDialogFragment: DialogFragment() {
             builder.setView(view).setPositiveButton("Add") {_, _ ->
                 doAsync {
                     val name = view.findViewById<EditText>(R.id.chore_name_editText).text.toString()
-                    val date = view.findViewById<EditText>(R.id.chore_date_editText).text.toString()
 
-                    val newChore = Chore(name, date, false, false, assignee!!, room!!)
+                    if(date == null) {
+                        date = "${calendar.get(Calendar.MONTH)+1}-${calendar.get(Calendar.DAY_OF_MONTH)}-${calendar.get(Calendar.YEAR)}"
+                    }
+
+                    val newChore = Chore(name, date!!, false, false, assignee!!, room!!)
 
                     uiThread {
                         listener?.onChoreAddDialogFinished(newChore)
@@ -111,6 +120,14 @@ class AddChoreDialogFragment: DialogFragment() {
         }
 
         return builder.create()
+    }
+
+    fun getDatePicker(view: View) {
+        val datePicker = view.findViewById<DatePicker>(R.id.chore_date_picker)
+        datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)) { _, year, month, day ->
+            date = "${month+1}-$day-$year"
+        }
     }
 
     fun getUsersInHouse(view: View) {
