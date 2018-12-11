@@ -45,7 +45,7 @@ abstract class HomiesDatabase: RoomDatabase(){
                                 getInstance(context).userHouseDao().insertUserHouse(UserHouse(1, 1))
                                 getInstance(context).userHouseDao().insertUserHouse(UserHouse(2, 1))
                                 getInstance(context).roomDao().insertRoom(HouseRoom("Kitchen", 1))
-                                getInstance(context).choreDao().insertChore(Chore("Clean dishes", "12-5-18", false, false, 1, 1))
+                                getInstance(context).choreDao().insertChore(Chore("Clean dishes", "12-5-2018", false, false, 1, 1))
                             }
                         }
                     })

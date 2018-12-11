@@ -15,8 +15,10 @@ import com.example.evan.homies.viewmodels.HouseViewModel
 import kotlinx.android.synthetic.main.cardview_room_card.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import android.util.Log
 
-class HouseAdapter(private var fragment: HouseFragment, private var mData: List<RoomAllChores>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+class HouseAdapter(private var fragment: HouseFragment, private var listener: ItemClickedListener, private var mData: List<RoomAllChores>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     //IMPORTANT: this is a RoomAllChores Object which exists for each room and has a list of chores
     // ex.) roomData[0].chores is a list of chores for the first room in the list
@@ -120,10 +122,22 @@ class HouseAdapter(private var fragment: HouseFragment, private var mData: List<
             roomName = itemView.roomName
             openChores = itemView.openChores
             completedChores = itemView.completedChores
-        }
+
+            itemView.setOnClickListener {
+                val pos = adapterPosition
+                Log.d("ADAPTER POSITION", pos.toString())
+                val data = if(pos > -1) mData[pos] else null
+                listener.onItemClicked(data)
+            }
+        }//init
     }
 
     inner class ViewHolderEmpty(itemView: View) : RecyclerView.ViewHolder(itemView)  {
 
+    }
+
+    //new ***
+    interface ItemClickedListener  {
+        fun onItemClicked(data: RoomAllChores?)
     }
 }

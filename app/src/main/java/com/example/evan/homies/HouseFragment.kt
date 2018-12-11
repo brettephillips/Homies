@@ -19,19 +19,18 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.example.evan.homies.R.id.fab
 import com.example.evan.homies.entities.House
 import com.example.evan.homies.entities.HouseInfo
 import com.example.evan.homies.entities.HouseRoom
 import com.example.evan.homies.entities.RoomAllChores
 import com.example.evan.homies.viewmodels.HouseViewModel
 import kotlinx.android.synthetic.main.fragment_house.*
-import java.util.*
 
 class HouseFragment : Fragment(),
     CreateHouseDialogFragment.OnCreateDialogFinishedListener,
     JoinHouseDialogFragment.OnJoinDialogFinishedListener,
-    CreateRoomDialogFragment.OnRoomDialogFinishedListener {
+    CreateRoomDialogFragment.OnRoomDialogFinishedListener,
+    HouseAdapter.ItemClickedListener {
 
     private var userId: Long? = null
     private var house: HouseInfo? = null
@@ -53,36 +52,14 @@ class HouseFragment : Fragment(),
         super.onCreate(savedInstanceState)
         //check user id
         userId = arguments!!.getLong(ChoresFragment.USER_ID,0)
+        Log.d("USER ID FROM ARGS", userId.toString())
         if (userId == 0.toLong()){
             //TODO: send to login screen
         }
         // init viewModel and adapter
         houseViewModel = HouseViewModel(activity!!.application)
-        mAdapter = HouseAdapter(this, mutableListOf<RoomAllChores>())
+        mAdapter = HouseAdapter(this, this, mutableListOf<RoomAllChores>())
 
-        houseViewModel!!.getCurrentHouse().observe(this, Observer { data ->
-            Log.d("CURRENT HOUSE:", data.toString())
-            house = data
-            if(house?.name != null || house?.name != "") {
-                updateTitle(); hideBottomButtons()
-                //get house rooms and give to adapter to put in recycler view
-                doAsync {
-                    houseViewModel!!.getAllRooms(house!!.id!!)
-                }
-            }
-        })
-
-        houseViewModel!!.getCurrentRooms().observe(this, Observer { data ->
-            roomsData = data
-            Log.d("CURRENT ROOM DATA", roomsData?.map { data -> data.room }.toString())
-            mAdapter!!.addAll(roomsData ?: emptyList())
-        })
-
-        //get current house
-        doAsync {
-            //gets the user's house, will update the observer
-            houseViewModel!!.getUsersHouse(userId!!)
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -118,6 +95,41 @@ class HouseFragment : Fragment(),
         setRecyclerViewItemTouchListener()
 
         return view
+    }
+
+    // gets called every time the fragment is ready to be shown
+    override fun onStart() {
+        super.onStart()
+        houseViewModel!!.getCurrentHouse().observe(this, Observer { data ->
+            Log.d("CURRENT HOUSE:", data.toString())
+            house = data
+            if(house?.name != null || house?.name != "") {
+                updateTitle()
+                hideBottomButtons()
+                //get house rooms and give to adapter to put in recycler view
+                doAsync {
+                    houseViewModel!!.getAllRooms(house!!.id!!)
+                }
+            }
+        })
+
+        houseViewModel!!.getCurrentRooms().observe(this, Observer { data ->
+            roomsData = data
+            Log.d("CURRENT ROOM DATA", roomsData?.map { data -> data.room }.toString())
+            mAdapter!!.addAll(roomsData ?: emptyList())
+        })
+
+        //get current house
+        doAsync {
+            //gets the user's house, will update the observer
+            houseViewModel!!.getUsersHouse(userId!!)
+        }
+    }
+
+    override fun onStop() {
+        houseViewModel!!.getCurrentHouse().removeObservers(this)
+        houseViewModel!!.getCurrentRooms().removeObservers(this)
+        super.onStop()
     }
 
     // called after the CreateHouseDialog "save" button is clicked
@@ -221,5 +233,22 @@ class HouseFragment : Fragment(),
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
     } //setRecyclerViewItemTouchListener
+
+    override fun onItemClicked(data: RoomAllChores?) {
+        if (data != null){
+            val detailFrag = RoomDetailFragment.newInstance(data.room!!.id)
+
+            detailFrag.arguments = arguments!!
+
+            activity!!.supportFragmentManager.beginTransaction().replace(R.id.fragment_container, detailFrag)
+                .addToBackStack(detailFrag.javaClass.simpleName).commit()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("ON RESUME ID", userId!!.toString())
+        //Log.d("ON RESUME HOUSE", house?.toString())
+    }
 
 }
