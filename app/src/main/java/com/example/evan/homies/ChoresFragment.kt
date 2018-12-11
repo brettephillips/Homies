@@ -22,15 +22,17 @@ import com.example.evan.homies.R.id.textView
 import com.example.evan.homies.entities.Chore
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.util.ArrayList
 import android.app.AlarmManager
+import android.content.BroadcastReceiver
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat.*
+import android.support.v4.content.ContextCompat.getSystemService
+import java.util.*
 
 
-class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener, ChoreAdapter.OnChoreAction{
+class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinishedListener, ChoreAdapter.OnChoreAction {
     private lateinit var choreViewModel: ChoreViewModel
     private var totalChores: Int = 0
     private var userId: Long? = null
@@ -163,10 +165,15 @@ class ChoresFragment : Fragment(), AddChoreDialogFragment.OnChoreAddDialogFinish
                         .setContentTitle("Chore Due")
                         .setContentText("${chore.name} is due on ${chore.dateDue}. Hurry up and get it done!!!")
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .build()
 
 
-                val mNotificationManager = NotificationManagerCompat.from(context!!)
-                mNotificationManager.notify(0, notification.build())
+                val alarmManager = context!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val notificationIntent = Intent(context, NotificationBroadcaster::class.java)
+                notificationIntent.putExtra("notification_id", 1);
+                notificationIntent.putExtra("notification", notification);
+                val alarmIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, 0)
+                alarmManager.set(AlarmManager.RTC, Calendar.getInstance().getTimeInMillis() + 5000, alarmIntent)
             }
         }
     }

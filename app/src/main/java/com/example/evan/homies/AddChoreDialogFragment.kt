@@ -2,9 +2,10 @@ package com.example.evan.homies
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v4.app.DialogFragment
-import android.text.Editable
 import android.view.View
 import android.widget.*
 import com.example.evan.homies.entities.Chore
@@ -47,6 +48,7 @@ class AddChoreDialogFragment: DialogFragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         choreViewModel = ChoreViewModel(activity?.application!!)
         if (savedInstanceState != null) {
