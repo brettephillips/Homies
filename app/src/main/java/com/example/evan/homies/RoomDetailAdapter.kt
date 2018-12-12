@@ -48,6 +48,9 @@ class RoomDetailAdapter(private var roomData: RoomAllChores): RecyclerView.Adapt
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, i: Int) {
+        print("ROOM DATA IN ONBIND VH")
+        println(roomData)
+        println("i: $i")
         val viewType = getItemViewType(i)
         if (viewType == VIEW_TYPE_EMPTY) {
             //Don't need to do anything

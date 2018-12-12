@@ -38,17 +38,6 @@ class RoomDetailFragment : Fragment() {
             roomID = savedInstanceState!!.getLong("roomID")
         }
 
-        roomDetailViewModel!!.getCurrentRoom().observe(this , Observer {
-            data ->
-            roomData = data
-            mAdapter!!.addAll(roomData ?: RoomAllChores())
-            view?.findViewById<EditText>(R.id.roomTitleEditText)?.setText(data!!.room!!.name)
-        })
-
-        doAsync {
-            //get data for room
-            roomDetailViewModel!!.getRoomData(roomID!!)
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -85,6 +74,26 @@ class RoomDetailFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        roomDetailViewModel!!.getCurrentRoom().observe(this , Observer {
+                data ->
+            roomData = data
+            mAdapter!!.addAll(roomData ?: RoomAllChores())
+            view?.findViewById<EditText>(R.id.roomTitleEditText)?.setText(data!!.room!!.name)
+        })
+
+        doAsync {
+            //get data for room
+            roomDetailViewModel!!.getRoomData(roomID!!)
+        }
+    }
+
+    override fun onStop() {
+        roomDetailViewModel!!.getCurrentRoom().removeObservers(this)
+        super.onStop()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
